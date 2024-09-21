@@ -30,7 +30,7 @@ abstract class AbstractAPIClient(
             expectSuccess = true
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { exception, _ ->
-                    val clientException = exception as? ClientRequestException
+                    val clientException = exception as? ResponseException
                         ?: return@handleResponseExceptionWithRequest
                     val error = clientException.response.body<Map<String, String>>()["error"]
                         ?: return@handleResponseExceptionWithRequest
