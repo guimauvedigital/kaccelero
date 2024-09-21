@@ -7,7 +7,7 @@ Core of kaccelero.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:core:0.2.0")
+api("dev.kaccelero:core:0.2.1")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:core:0.2.0")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>core-jvm</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 
@@ -204,5 +204,6 @@ class DeleteMyModelUseCase(repository: MyModelRepository) :
 ```
 
 Suspend variants are available too:
-`ListModelFromRepositorySuspendUseCase`, `GetModelFromRepositorySuspendUseCase`, `CreateModelFromRepositorySuspendUseCase`,
+`ListModelFromRepositorySuspendUseCase`, `GetModelFromRepositorySuspendUseCase`,
+`CreateModelFromRepositorySuspendUseCase`,
 `UpdateModelFromRepositorySuspendUseCase` and `DeleteModelFromRepositorySuspendUseCase`.

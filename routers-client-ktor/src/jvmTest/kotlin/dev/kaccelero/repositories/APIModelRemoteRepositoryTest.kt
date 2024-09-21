@@ -96,6 +96,23 @@ class APIModelRemoteRepositoryTest {
     }
 
     @Test
+    fun testGetAPIErrorInternal() = runBlocking {
+        val repository = createRepository(MockEngine { request ->
+            assertEquals("https://example.com/api/testmodels/1", request.url.toString())
+            respond(
+                content = """{"error": "internal_error"}""",
+                status = HttpStatusCode.InternalServerError,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        })
+        val exception = assertFailsWith<APIException> {
+            repository.get(1)
+        }
+        assertEquals(HttpStatusCode.InternalServerError, exception.code)
+        assertEquals("internal_error", exception.key)
+    }
+
+    @Test
     fun testCreate() = runBlocking {
         val repository = createRepository(MockEngine { request ->
             assertEquals("https://example.com/api/testmodels", request.url.toString())
