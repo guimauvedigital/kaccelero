@@ -7,7 +7,7 @@ Definitions and extensions for Exposed databases.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:database-exposed:0.2.1")
+api("dev.kaccelero:database-exposed:0.3.0")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:database-exposed:0.2.1")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>database-exposed-jvm</artifactId>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 

@@ -13,25 +13,25 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             // Plugins
-            version("kotlin", "2.0.0")
+            version("kotlin", "2.0.20")
             plugin("multiplatform", "org.jetbrains.kotlin.multiplatform").versionRef("kotlin")
             plugin("serialization", "org.jetbrains.kotlin.plugin.serialization").versionRef("kotlin")
-            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.0")
-            plugin("ksp", "com.google.devtools.ksp").version("2.0.0-1.0.21")
+            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.3")
+            plugin("ksp", "com.google.devtools.ksp").version("2.0.20-1.0.24")
             plugin("maven", "com.vanniktech.maven.publish").version("0.28.0")
 
             // Kotlinx
-            library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-            library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
-            library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
-            library("kotlin-js", "org.jetbrains.kotlin-wrappers:kotlin-js:1.0.0-pre.758")
+            library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+            library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+            library("kotlin-js", "org.jetbrains.kotlin-wrappers:kotlin-js:1.0.0-pre.812")
 
             // Tests
-            library("tests-mockk", "io.mockk:mockk:1.13.11")
-            library("tests-h2", "com.h2database:h2:2.2.224")
+            library("tests-mockk", "io.mockk:mockk:1.13.12")
+            library("tests-h2", "com.h2database:h2:2.3.232")
 
             // Exposed
-            version("exposed", "0.51.1")
+            version("exposed", "0.54.0")
             library("exposed-core", "org.jetbrains.exposed", "exposed-core").versionRef("exposed")
             library("exposed-jdbc", "org.jetbrains.exposed", "exposed-jdbc").versionRef("exposed")
             library("exposed-dao", "org.jetbrains.exposed", "exposed-dao").versionRef("exposed")
@@ -52,7 +52,7 @@ dependencyResolutionManagement {
             )
 
             // Ktor
-            version("ktor", "2.3.11")
+            version("ktor", "2.3.12")
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").versionRef("ktor")
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef("ktor")
             library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef("ktor")
