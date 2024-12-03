@@ -3,8 +3,8 @@ package dev.kaccelero.commons.analytics
 import kotlin.js.JsExport
 
 @JsExport
-interface IAnalyticsEventValue {
+interface IAnalyticsUserProperty {
 
-    val stringValue: String
+    val key: String
 
 }

@@ -3,7 +3,7 @@ package dev.kaccelero.commons.analytics
 import kotlin.js.JsExport
 
 @JsExport
-interface IAnalyticsEventValue {
+interface IAnalyticsUserValue {
 
     val stringValue: String
 
