@@ -1,20 +1,20 @@
-# routers
+# analytics
 
-Routers of kaccelero.
+Multiplatform analytics interfaces.
 
 ## Installation
 
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:routers:0.4.0")
+api("dev.kaccelero:analytics:0.4.0")
 ```
 
 ```xml
 
 <dependency>
     <groupId>dev.kaccelero</groupId>
-    <artifactId>routers-jvm</artifactId>
+    <artifactId>analytics-jvm</artifactId>
     <version>0.4.0</version>
 </dependency>
 ```

@@ -7,7 +7,7 @@ i18n extension for ktor.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:i18n-ktor:0.3.0")
+api("dev.kaccelero:i18n-ktor:0.4.0")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:i18n-ktor:0.3.0")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>i18n-ktor-jvm</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 

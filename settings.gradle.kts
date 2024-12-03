@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -14,11 +15,13 @@ dependencyResolutionManagement {
         create("libs") {
             // Plugins
             version("kotlin", "2.0.20")
+            version("agp", "8.5.0")
             plugin("multiplatform", "org.jetbrains.kotlin.multiplatform").versionRef("kotlin")
             plugin("serialization", "org.jetbrains.kotlin.plugin.serialization").versionRef("kotlin")
             plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.3")
             plugin("ksp", "com.google.devtools.ksp").version("2.0.20-1.0.24")
             plugin("maven", "com.vanniktech.maven.publish").version("0.28.0")
+            plugin("android-library", "com.android.library").versionRef("agp")
 
             // Kotlinx
             library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
@@ -143,4 +146,5 @@ include(":auth")
 include(":auth-apple")
 include(":health-ktor")
 include(":health-sentry-ktor")
-
+include(":analytics")
+include(":settings")
