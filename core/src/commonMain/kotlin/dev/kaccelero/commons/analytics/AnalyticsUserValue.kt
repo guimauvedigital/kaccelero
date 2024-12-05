@@ -5,7 +5,7 @@ import kotlin.js.JsExport
 
 @JsExport
 @Serializable
-data class AnalyticsEventValue<T>(val value: T) : IAnalyticsEventValue {
+data class AnalyticsUserValue<T>(val value: T) : IAnalyticsUserValue {
 
     override val stringValue: String
         get() = value.toString()

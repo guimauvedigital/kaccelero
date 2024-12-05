@@ -4,7 +4,7 @@ class ILogEventUseCaseAsSuspend(private val useCase: ILogEventUseCase) : ILogEve
 
     override suspend fun invoke(
         input1: IAnalyticsEventName,
-        input2: Map<IAnalyticsEventParameter, IAnalyticsEventValue>,
+        input2: List<Pair<IAnalyticsEventParameter, IAnalyticsEventValue>>,
     ) = useCase(input1, input2)
 
 }

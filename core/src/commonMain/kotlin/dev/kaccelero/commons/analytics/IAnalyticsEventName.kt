@@ -5,6 +5,6 @@ import kotlin.js.JsExport
 @JsExport
 interface IAnalyticsEventName {
 
-    val name: String
+    val key: String
 
 }

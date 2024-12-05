@@ -6,6 +6,6 @@ class GetSubscriptionStatusUseCase(
     private val subscriptionRepository: ISubscriptionRepository,
 ) : IGetSubscriptionStatusUseCase {
 
-    override fun invoke(): SubscriptionStatus = subscriptionRepository.getSubscriptionStatus()
+    override fun invoke(): ISubscriptionStatus = subscriptionRepository.getSubscriptionStatus()
 
 }

@@ -12,7 +12,7 @@ class LogEventWithCompletionUseCase(
 
     override fun invoke(
         input1: IAnalyticsEventName,
-        input2: Map<IAnalyticsEventParameter, IAnalyticsEventValue>,
+        input2: List<Pair<IAnalyticsEventParameter, IAnalyticsEventValue>>,
         input3: () -> Unit,
     ) {
         val wasSubscribed = subscriptionRepository.getSubscriptionStatus().isActive

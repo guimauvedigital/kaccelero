@@ -3,14 +3,16 @@ package dev.kaccelero.commons.analytics
 import dev.kaccelero.usecases.IPairUseCase
 
 interface ILogEventUseCase :
-    IPairUseCase<IAnalyticsEventName, Map<IAnalyticsEventParameter, IAnalyticsEventValue>, Unit> {
+    IPairUseCase<IAnalyticsEventName, List<Pair<IAnalyticsEventParameter, IAnalyticsEventValue>>, Unit> {
 
-    operator fun invoke(input: IAnalyticsEventName) = invoke(input, emptyMap())
-    operator fun invoke(input: String) = invoke(input, emptyMap())
+    operator fun invoke(
+        input1: IAnalyticsEventName,
+        vararg input2: Pair<IAnalyticsEventParameter, IAnalyticsEventValue>,
+    ) = invoke(input1, input2.toList())
 
-    operator fun invoke(input1: String, input2: Map<String, Any>) = invoke(
+    operator fun invoke(input1: String, vararg input2: Pair<String, Any>) = invoke(
         AnalyticsEventName(input1),
-        input2.mapKeys { AnalyticsEventParameter(it.key) }.mapValues { AnalyticsEventValue(it.value) }
+        input2.map { AnalyticsEventParameter(it.first) to AnalyticsEventValue(it.second) }
     )
 
 }

@@ -14,19 +14,19 @@ class ILogEventUseCaseAsSuspendTest {
         val suspendUseCase = ILogEventUseCaseAsSuspend(useCase)
         every {
             useCase(
-                AnalyticsEventName("test"), mapOf(
+                AnalyticsEventName("test"), listOf(
                     AnalyticsEventParameter("test") to AnalyticsEventValue("test")
                 )
             )
         } returns Unit
         suspendUseCase(
-            AnalyticsEventName("test"), mapOf(
+            AnalyticsEventName("test"), listOf(
                 AnalyticsEventParameter("test") to AnalyticsEventValue("test")
             )
         )
         verify {
             useCase(
-                AnalyticsEventName("test"), mapOf(
+                AnalyticsEventName("test"), listOf(
                     AnalyticsEventParameter("test") to AnalyticsEventValue("test")
                 )
             )

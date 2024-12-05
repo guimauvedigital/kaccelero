@@ -6,7 +6,7 @@ interface IAnalyticsRepository {
 
     fun logEvent(
         name: IAnalyticsEventName,
-        params: Map<IAnalyticsEventParameter, IAnalyticsEventValue>,
+        params: List<Pair<IAnalyticsEventParameter, IAnalyticsEventValue>>,
         completion: () -> Unit,
     )
 
