@@ -48,15 +48,16 @@ open class APIChildModelRemoteRepository<Model : IChildModel<Id, CreatePayload, 
         parentId: RecursiveId<*, ParentId, *>,
         context: IContext?,
     ): List<Model> = client.request(HttpMethod.Get, constructFullRoute(parentId)) {
-        parameter("limit", pagination.limit)
-        parameter("offset", pagination.offset)
-        pagination.options?.let { encodePaginationOptions(it, this) }
+        encodePagination(pagination)
     }.body(listTypeInfo)
 
-    open fun encodePaginationOptions(
-        options: IPaginationOptions,
-        builder: HttpRequestBuilder,
-    ) {
+    open fun HttpRequestBuilder.encodePagination(pagination: Pagination) {
+        parameter("limit", pagination.limit)
+        parameter("offset", pagination.offset)
+        pagination.options?.let { encodePaginationOptions(it) }
+    }
+
+    open fun HttpRequestBuilder.encodePaginationOptions(options: IPaginationOptions) {
         // Do nothing by default, override to implement custom behavior
     }
 

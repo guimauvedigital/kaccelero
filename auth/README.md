@@ -7,7 +7,7 @@ Reusable auth basics.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:auth:0.4.1")
+api("dev.kaccelero:auth:0.4.2")
 ```
 
 ```xml
@@ -16,7 +16,7 @@ api("dev.kaccelero:auth:0.4.1")
     <dependency>
         <groupId>dev.kaccelero</groupId>
         <artifactId>auth-jvm</artifactId>
-        <version>0.4.1</version>
+        <version>0.4.2</version>
     </dependency>
 </dependencies>
 ```
