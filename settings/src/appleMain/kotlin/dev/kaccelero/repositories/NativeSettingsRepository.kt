@@ -102,33 +102,33 @@ class NativeSettingsRepository(
         keychainRepository?.getKeychainItem(key)?.toNSUUID(keychainUsingNSKeyedArchiver)?.let(::UUID)
 
     override fun setSecureString(key: String, value: String) {
-        keychainRepository?.addKeychainItem(key, value.toNSString().toNSData(keychainUsingNSKeyedArchiver) ?: return)
+        keychainRepository?.setKeychainItem(key, value.toNSString().toNSData(keychainUsingNSKeyedArchiver) ?: return)
     }
 
     override fun setSecureBoolean(key: String, value: Boolean) {
-        keychainRepository?.addKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
+        keychainRepository?.setKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
     }
 
     override fun setSecureInt(key: String, value: Int) {
-        keychainRepository?.addKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
+        keychainRepository?.setKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
     }
 
     override fun setSecureLong(key: String, value: Long) {
-        keychainRepository?.addKeychainItem(
+        keychainRepository?.setKeychainItem(
             key, NSNumber(long = value).toNSData(keychainUsingNSKeyedArchiver) ?: return
         )
     }
 
     override fun setSecureFloat(key: String, value: Float) {
-        keychainRepository?.addKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
+        keychainRepository?.setKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
     }
 
     override fun setSecureDouble(key: String, value: Double) {
-        keychainRepository?.addKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
+        keychainRepository?.setKeychainItem(key, NSNumber(value).toNSData(keychainUsingNSKeyedArchiver) ?: return)
     }
 
     override fun setSecureUUID(key: String, value: UUID) {
-        keychainRepository?.addKeychainItem(key, value.nsUUID.toNSData(keychainUsingNSKeyedArchiver) ?: return)
+        keychainRepository?.setKeychainItem(key, value.nsUUID.toNSData(keychainUsingNSKeyedArchiver) ?: return)
     }
 
 }

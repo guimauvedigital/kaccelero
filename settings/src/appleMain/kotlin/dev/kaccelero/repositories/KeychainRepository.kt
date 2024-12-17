@@ -26,13 +26,17 @@ class KeychainRepository(
         mapOf(kSecAttrAccessGroup to cfAccessGroup)
     } ?: emptyMap())
 
+    fun setKeychainItem(key: String, value: NSData?) {
+        if (hasKeychainItem(key)) updateKeychainItem(key, value)
+        else addKeychainItem(key, value)
+    }
+
     fun addKeychainItem(key: String, value: NSData?): Boolean = cfRetain(key, value) { cfKey, cfValue ->
         val status = keyChainOperation(
             kSecAttrAccount to cfKey,
             kSecValueData to cfValue
         ) { SecItemAdd(it, null) }
         status.checkError(errSecDuplicateItem)
-
         status != errSecDuplicateItem
     }
 
@@ -64,9 +68,7 @@ class KeychainRepository(
             kSecMatchLimit to kSecMatchLimitOne
         ) { SecItemCopyMatching(it, cfValue.ptr) }
         status.checkError(errSecItemNotFound)
-        if (status == errSecItemNotFound) {
-            return@cfRetain null
-        }
+        if (status == errSecItemNotFound) return@cfRetain null
         CFBridgingRelease(cfValue.value) as? NSData
     }
 
@@ -75,7 +77,6 @@ class KeychainRepository(
             kSecAttrAccount to cfKey,
             kSecMatchLimit to kSecMatchLimitOne
         ) { SecItemCopyMatching(it, null) }
-
         status != errSecItemNotFound
     }
 
