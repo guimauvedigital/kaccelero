@@ -64,7 +64,7 @@ abstract class AbstractAPIClient(
             if (exception.code != HttpStatusCode.Unauthorized) throw exception
 
             val success = try {
-                renewTokenUseCase?.invoke(this) ?: false
+                renewTokenUseCase?.invoke(this) == true
             } catch (e: Exception) {
                 false
             }
