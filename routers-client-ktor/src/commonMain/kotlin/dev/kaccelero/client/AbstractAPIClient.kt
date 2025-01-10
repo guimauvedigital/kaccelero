@@ -52,9 +52,7 @@ abstract class AbstractAPIClient(
         val doRequest: suspend () -> HttpResponse = {
             httpClient.request(baseUrl + path) {
                 this.method = method
-                if (shouldIncludeToken(method, path)) getTokenUseCase?.invoke()?.let { token ->
-                    header("Authorization", "Bearer $token")
-                }
+                if (shouldIncludeToken(method, path)) getTokenUseCase?.invoke()?.let(::bearerAuth)
                 builder()
             }
         }
