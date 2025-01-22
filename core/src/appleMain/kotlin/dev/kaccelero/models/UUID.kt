@@ -11,7 +11,7 @@ actual class UUID(val nsUUID: NSUUID) {
     actual constructor() : this(NSUUID())
     actual constructor(string: String) : this(NSUUID(string))
 
-    actual override fun toString(): String = nsUUID.UUIDString
+    actual override fun toString(): String = nsUUID.UUIDString.lowercase()
 
     actual override fun equals(other: Any?): Boolean {
         if (this === other) return true
