@@ -1,9 +1,6 @@
 package dev.kaccelero.routers
 
-import dev.kaccelero.annotations.ModelAnnotations
-import dev.kaccelero.annotations.Payload
-import dev.kaccelero.annotations.PropertyValidatorException
-import dev.kaccelero.annotations.TemplateMapping
+import dev.kaccelero.annotations.*
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.commons.responses.ControllerResponse
 import dev.kaccelero.commons.responses.RedirectResponse
@@ -71,6 +68,13 @@ open class TemplateChildModelRouter<Model : IChildModel<Id, CreatePayload, Updat
                     )
                 )
             }
+
+            is MissingParameterException -> handleExceptionTemplate(
+                ControllerException(
+                    if (exception.type.isBadRequest) HttpStatusCode.BadRequest else HttpStatusCode.NotFound,
+                    "error_parameter_${exception.key}"
+                ), call, fromTemplate
+            )
 
             is PropertyValidatorException -> handleExceptionTemplate(
                 ControllerException(

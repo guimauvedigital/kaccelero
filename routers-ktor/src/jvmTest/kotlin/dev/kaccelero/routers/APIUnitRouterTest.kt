@@ -97,7 +97,7 @@ class APIUnitRouterTest {
             router.createRoutes(this)
         }
         val response = client.get("/api/hello/query")
-        assertEquals(HttpStatusCode.NotFound, response.status)
+        assertEquals(HttpStatusCode.BadRequest, response.status)
     }
 
     @Test

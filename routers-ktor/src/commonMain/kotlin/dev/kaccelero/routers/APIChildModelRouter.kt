@@ -51,6 +51,13 @@ open class APIChildModelRouter<Model : IChildModel<Id, CreatePayload, UpdatePayl
                 call.respond(mapOf("error" to exception.key))
             }
 
+            is MissingParameterException -> handleExceptionAPI(
+                ControllerException(
+                    if (exception.type.isBadRequest) HttpStatusCode.BadRequest else HttpStatusCode.NotFound,
+                    "error_parameter_${exception.key}"
+                ), call
+            )
+
             is PropertyValidatorException -> handleExceptionAPI(
                 ControllerException(HttpStatusCode.BadRequest, "${route}_${exception.key}_${exception.reason}"), call
             )

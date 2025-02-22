@@ -1,10 +1,6 @@
 package dev.kaccelero.routers
 
-import dev.kaccelero.annotations.ModelAnnotations
-import dev.kaccelero.annotations.PathParameter
-import dev.kaccelero.annotations.Payload
-import dev.kaccelero.annotations.QueryParameter
-import dev.kaccelero.commons.exceptions.ControllerException
+import dev.kaccelero.annotations.*
 import dev.kaccelero.controllers.IChildModelController
 import dev.kaccelero.models.IChildModel
 import io.ktor.http.*
@@ -116,9 +112,8 @@ abstract class AbstractChildModelRouter<Model : IChildModel<Id, CreatePayload, U
                         modelTypeInfo.type as KClass<Model>,
                         call.parameters[id]!!
                     ).let {
-                        if (it == null && !parameter.type.isMarkedNullable) throw ControllerException(
-                            HttpStatusCode.NotFound,
-                            "Missing parameter: ${parameter.name}"
+                        if (it == null && !parameter.type.isMarkedNullable) throw MissingParameterException(
+                            ParameterType.ID, parameter.name
                         )
                         it
                     }
@@ -128,9 +123,8 @@ abstract class AbstractChildModelRouter<Model : IChildModel<Id, CreatePayload, U
                         parameter.type,
                         parameter.name?.let { call.parameters[it] }
                     ).let {
-                        if (it == null && !parameter.type.isMarkedNullable) throw ControllerException(
-                            HttpStatusCode.NotFound,
-                            "Missing parameter: ${parameter.name}"
+                        if (it == null && !parameter.type.isMarkedNullable) throw MissingParameterException(
+                            ParameterType.PATH, parameter.name
                         )
                         it
                     }
@@ -140,9 +134,8 @@ abstract class AbstractChildModelRouter<Model : IChildModel<Id, CreatePayload, U
                         parameter.type,
                         parameter.name?.let { call.request.queryParameters[it] }
                     ).let {
-                        if (it == null && !parameter.type.isMarkedNullable) throw ControllerException(
-                            HttpStatusCode.NotFound,
-                            "Missing parameter: ${parameter.name}"
+                        if (it == null && !parameter.type.isMarkedNullable) throw MissingParameterException(
+                            ParameterType.QUERY, parameter.name
                         )
                         it
                     }
