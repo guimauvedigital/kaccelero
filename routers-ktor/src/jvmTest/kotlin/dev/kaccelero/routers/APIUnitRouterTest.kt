@@ -4,6 +4,7 @@ import dev.kaccelero.commons.responses.BytesResponse
 import dev.kaccelero.commons.responses.StatusResponse
 import dev.kaccelero.commons.responses.StreamResponse
 import dev.kaccelero.mocks.ITestUnitController
+import dev.kaccelero.models.UUID
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -65,6 +66,38 @@ class APIUnitRouterTest {
         val response = client.get("/api/hello/query?name=world")
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals("Hello world", response.body())
+    }
+
+    @Test
+    fun testAPIQueryParameterOptionalRoute() = testApplication {
+        val client = installApp(this)
+        val controller = mockk<ITestUnitController>()
+        val router = APIUnitRouter(
+            controller,
+            ITestUnitController::class
+        )
+        coEvery { controller.helloQueryOptional(null) } returns "Hello world"
+        routing {
+            router.createRoutes(this)
+        }
+        val response = client.get("/api/hello/optional")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("Hello world", response.body())
+    }
+
+    @Test
+    fun testAPIQueryParameterMissingRoute() = testApplication {
+        val client = installApp(this)
+        val controller = mockk<ITestUnitController>()
+        val router = APIUnitRouter(
+            controller,
+            ITestUnitController::class
+        )
+        routing {
+            router.createRoutes(this)
+        }
+        val response = client.get("/api/hello/query")
+        assertEquals(HttpStatusCode.NotFound, response.status)
     }
 
     @Test
@@ -199,6 +232,39 @@ class APIUnitRouterTest {
         assertEquals(HttpStatusCode.Created, response.status)
         assertEquals(ContentType.Image.PNG, response.contentType())
         assertEquals(bytes.toList(), response.body<ByteArray>().toList())
+    }
+
+    @Test
+    fun testAPIPathParameterUUIDRoute() = testApplication {
+        val client = installApp(this)
+        val controller = mockk<ITestUnitController>()
+        val router = APIUnitRouter(
+            controller,
+            ITestUnitController::class
+        )
+        val uuid = UUID()
+        coEvery { controller.uuid(uuid) } returns uuid.toString()
+        routing {
+            router.createRoutes(this)
+        }
+        val response = client.get("/api/uuid/$uuid")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(uuid.toString(), response.body())
+    }
+
+    @Test
+    fun testAPIPathParameterWrongUUIDRoute() = testApplication {
+        val client = installApp(this)
+        val controller = mockk<ITestUnitController>()
+        val router = APIUnitRouter(
+            controller,
+            ITestUnitController::class
+        )
+        routing {
+            router.createRoutes(this)
+        }
+        val response = client.get("/api/uuid/wrong")
+        assertEquals(HttpStatusCode.NotFound, response.status)
     }
 
 }

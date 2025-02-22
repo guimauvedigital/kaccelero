@@ -1,6 +1,10 @@
 package dev.kaccelero.routers
 
-import dev.kaccelero.annotations.*
+import dev.kaccelero.annotations.ModelAnnotations
+import dev.kaccelero.annotations.PathParameter
+import dev.kaccelero.annotations.Payload
+import dev.kaccelero.annotations.QueryParameter
+import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.controllers.IChildModelController
 import dev.kaccelero.models.IChildModel
 import io.ktor.http.*
@@ -111,22 +115,38 @@ abstract class AbstractChildModelRouter<Model : IChildModel<Id, CreatePayload, U
                     return@associateWith ModelAnnotations.constructIdFromString(
                         modelTypeInfo.type as KClass<Model>,
                         call.parameters[id]!!
-                    )
+                    ).let {
+                        if (it == null && !parameter.type.isMarkedNullable) throw ControllerException(
+                            HttpStatusCode.NotFound,
+                            "Missing parameter: ${parameter.name}"
+                        )
+                        it
+                    }
                 }
-                annotations.firstNotNullOfOrNull { it as? PathParameter }
-                    ?.let {
-                        return@associateWith ModelAnnotations.constructPrimitiveFromString(
-                            parameter.type,
-                            parameter.name?.let { call.parameters[it] }
+                annotations.firstNotNullOfOrNull { it as? PathParameter }?.let {
+                    return@associateWith ModelAnnotations.constructPrimitiveFromString<Any>(
+                        parameter.type,
+                        parameter.name?.let { call.parameters[it] }
+                    ).let {
+                        if (it == null && !parameter.type.isMarkedNullable) throw ControllerException(
+                            HttpStatusCode.NotFound,
+                            "Missing parameter: ${parameter.name}"
                         )
+                        it
                     }
-                annotations.firstNotNullOfOrNull { it as? QueryParameter }
-                    ?.let {
-                        return@associateWith ModelAnnotations.constructPrimitiveFromString(
-                            parameter.type,
-                            parameter.name?.let { call.request.queryParameters[it] }
+                }
+                annotations.firstNotNullOfOrNull { it as? QueryParameter }?.let {
+                    return@associateWith ModelAnnotations.constructPrimitiveFromString<Any>(
+                        parameter.type,
+                        parameter.name?.let { call.request.queryParameters[it] }
+                    ).let {
+                        if (it == null && !parameter.type.isMarkedNullable) throw ControllerException(
+                            HttpStatusCode.NotFound,
+                            "Missing parameter: ${parameter.name}"
                         )
+                        it
                     }
+                }
                 annotations.firstNotNullOfOrNull { it as? Payload }?.let {
                     val type = parameter.type.classifier as KClass<Any>
                     if (type == Unit::class) return@associateWith Unit
@@ -137,7 +157,7 @@ abstract class AbstractChildModelRouter<Model : IChildModel<Id, CreatePayload, U
                 annotations.firstNotNullOfOrNull { it as? dev.kaccelero.annotations.ParentModel }?.let {
                     var target: IChildModelRouter<*, *, *, *, *, *> = this
                     do {
-                        target = target.parentRouter as? IChildModelRouter<*, *, *, *, *, *>
+                        target = target.parentRouter
                             ?: throw IllegalArgumentException("Illegal parent model: ${parameter.type}")
                     } while (target.modelType != parameter.type)
                     return@associateWith target.get(call)

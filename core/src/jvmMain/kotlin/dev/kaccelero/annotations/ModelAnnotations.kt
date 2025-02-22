@@ -1,5 +1,6 @@
 package dev.kaccelero.annotations
 
+import dev.kaccelero.extensions.toUUIDOrNull
 import dev.kaccelero.models.IChildModel
 import dev.kaccelero.models.UUID
 import kotlinx.datetime.*
@@ -71,7 +72,7 @@ object ModelAnnotations {
             typeOf<Boolean>() -> !listOf("false", null).contains(value)
             typeOf<Boolean?>() -> value?.let { b -> b != "false" }
             typeOf<String>(), typeOf<String?>() -> value
-            typeOf<UUID>(), typeOf<UUID?>() -> value?.let(::UUID)
+            typeOf<UUID>(), typeOf<UUID?>() -> value?.toUUIDOrNull()
             typeOf<Instant>(), typeOf<Instant?>() -> value?.let(Instant::parse)
             typeOf<LocalDateTime>(), typeOf<LocalDateTime?>() -> value?.let(LocalDateTime::parse)
             typeOf<LocalDate>(), typeOf<LocalDate?>() -> value?.let(LocalDate::parse)

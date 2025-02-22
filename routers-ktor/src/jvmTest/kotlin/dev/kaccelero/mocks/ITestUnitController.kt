@@ -5,6 +5,7 @@ import dev.kaccelero.commons.responses.BytesResponse
 import dev.kaccelero.commons.responses.StatusResponse
 import dev.kaccelero.commons.responses.StreamResponse
 import dev.kaccelero.controllers.IUnitController
+import dev.kaccelero.models.UUID
 import io.ktor.server.websocket.*
 
 interface ITestUnitController : IUnitController {
@@ -18,6 +19,11 @@ interface ITestUnitController : IUnitController {
     @TemplateMapping("hello.ftl")
     @Path("GET", "/hello/query")
     suspend fun helloQuery(@QueryParameter name: String): String
+
+    @APIMapping
+    @TemplateMapping("hello.ftl")
+    @Path("GET", "/hello/optional")
+    suspend fun helloQueryOptional(@QueryParameter name: String?): String
 
     @APIMapping
     @TemplateMapping("hello.ftl")
@@ -52,5 +58,9 @@ interface ITestUnitController : IUnitController {
     @AdminTemplateMapping("dashboard.ftl")
     @Path("GET", "/")
     suspend fun dashboard()
+
+    @APIMapping
+    @Path("GET", "/uuid/{uuid}")
+    suspend fun uuid(@PathParameter uuid: UUID): String
 
 }
