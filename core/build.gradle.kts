@@ -69,10 +69,11 @@ kotlin {
         }
     }
     js {
+        useEsModules()
+        generateTypeScriptDefinitions()
         binaries.library()
         nodejs()
         browser()
-        //generateTypeScriptDefinitions() // Not supported for now because of collections etc...
     }
 
     applyDefaultHierarchyTemplate()
