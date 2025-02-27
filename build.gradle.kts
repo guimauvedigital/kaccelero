@@ -14,6 +14,7 @@ allprojects {
     project.ext.set("developer.email", "contact@nathanfallet.me")
     project.ext.set("developer.url", "https://www.nathanfallet.me")
     project.ext.set("scm.url", "https://github.com/guimauvedigital/kaccelero.git")
+    project.ext.set("npm.publish.organization", "kaccelero")
 
     repositories {
         google()

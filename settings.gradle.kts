@@ -21,6 +21,7 @@ dependencyResolutionManagement {
             plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.3")
             plugin("ksp", "com.google.devtools.ksp").version("2.0.20-1.0.24")
             plugin("maven", "com.vanniktech.maven.publish").version("0.28.0")
+            plugin("npm", "dev.petuska.npm.publish").version("3.4.1")
             plugin("android-library", "com.android.library").versionRef("agp")
 
             // Kotlinx

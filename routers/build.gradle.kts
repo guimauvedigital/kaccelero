@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp)
     alias(libs.plugins.maven)
+    alias(libs.plugins.npm)
 }
 
 mavenPublishing {
@@ -90,6 +91,22 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.tests.mockk)
+            }
+        }
+    }
+}
+
+npmPublish {
+    readme.set(file("README.md"))
+    registries {
+        register("npmjs") {
+            uri.set("https://registry.npmjs.org")
+        }
+    }
+    packages {
+        named("js") {
+            dependencies {
+                normal("@kaccelero/controllers", project.version.toString())
             }
         }
     }
