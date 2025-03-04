@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.maven)
     alias(libs.plugins.npm)
+    alias(libs.plugins.kotlinjsfix)
 }
 
 mavenPublishing {
@@ -69,7 +70,6 @@ kotlin {
         }
     }
     js {
-        useEsModules()
         generateTypeScriptDefinitions()
         binaries.library()
         nodejs()
@@ -102,18 +102,14 @@ kotlin {
                 implementation(libs.tests.mockk)
             }
         }
-        val desktopAndJsMain by creating {
-            dependsOn(commonMain)
-        }
         val jsMain by getting {
-            dependsOn(desktopAndJsMain)
             dependencies {
                 api(libs.kotlin.js)
+                api(npm("uuid", "11.1.0"))
             }
         }
         val desktopMain by creating {
             dependsOn(nativeMain)
-            dependsOn(desktopAndJsMain)
         }
         val mingwMain by getting {
             dependsOn(desktopMain)
@@ -122,6 +118,12 @@ kotlin {
             dependsOn(desktopMain)
         }
     }
+}
+
+kotlinjsfix {
+    flattenCjsExports = true
+    exportJsInterfaces = true
+    removeDoNotUseOrImplementIt = true
 }
 
 npmPublish {

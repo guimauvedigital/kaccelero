@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.maven)
     alias(libs.plugins.npm)
+    alias(libs.plugins.kotlinjsfix)
 }
 
 mavenPublishing {
@@ -69,7 +70,6 @@ kotlin {
         }
     }
     js {
-        useEsModules()
         generateTypeScriptDefinitions()
         binaries.library()
         nodejs()
@@ -95,6 +95,12 @@ kotlin {
             }
         }
     }
+}
+
+kotlinjsfix {
+    flattenCjsExports = true
+    exportJsInterfaces = true
+    removeDoNotUseOrImplementIt = true
 }
 
 npmPublish {

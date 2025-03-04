@@ -23,6 +23,7 @@ dependencyResolutionManagement {
             plugin("maven", "com.vanniktech.maven.publish").version("0.30.0")
             plugin("npm", "dev.petuska.npm.publish").version("3.4.1")
             plugin("android-library", "com.android.library").versionRef("agp")
+            plugin("kotlinjsfix", "me.nathanfallet.kotlinjsfix").version("1.0.1")
 
             // Kotlinx
             library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
