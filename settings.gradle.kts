@@ -27,7 +27,7 @@ dependencyResolutionManagement {
 
             // Kotlinx
             library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-            library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+            library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
             library("kotlin-js", "org.jetbrains.kotlin-wrappers:kotlin-js:1.0.0-pre.812")
 
@@ -129,6 +129,7 @@ dependencyResolutionManagement {
             // Others
             library("bcrypt", "at.favre.lib:bcrypt:0.9.0")
             library("sentry", "io.sentry:sentry-kotlin-extensions:7.10.0")
+            library("amqp", "com.rabbitmq:amqp-client:5.21.0")
         }
     }
 }
@@ -139,6 +140,7 @@ include(":controllers")
 include(":routers")
 include(":routers-ktor")
 include(":routers-client-ktor")
+include(":jobs-rabbitmq")
 include(":i18n")
 include(":i18n-ktor")
 include(":i18n-ktor-freemarker")

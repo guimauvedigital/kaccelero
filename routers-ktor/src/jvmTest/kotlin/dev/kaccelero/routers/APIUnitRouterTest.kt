@@ -4,6 +4,8 @@ import dev.kaccelero.commons.responses.BytesResponse
 import dev.kaccelero.commons.responses.StatusResponse
 import dev.kaccelero.commons.responses.StreamResponse
 import dev.kaccelero.mocks.ITestUnitController
+import dev.kaccelero.mocks.TestCreatePayload
+import dev.kaccelero.mocks.TestGenericPayload
 import dev.kaccelero.models.UUID
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -265,6 +267,29 @@ class APIUnitRouterTest {
         }
         val response = client.get("/api/uuid/wrong")
         assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
+    @Test
+    fun testAPIGenericPayload() = testApplication {
+        val client = installApp(this)
+        val controller = mockk<ITestUnitController>()
+        val router = APIUnitRouter(
+            controller,
+            ITestUnitController::class
+        )
+        val payload = TestGenericPayload(
+            TestCreatePayload("Hello world")
+        )
+        coEvery { controller.generic(payload) } returns payload.value.string
+        routing {
+            router.createRoutes(this)
+        }
+        val response = client.post("/api/generic") {
+            contentType(ContentType.Application.Json)
+            setBody(payload)
+        }
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(payload.value.string, response.body())
     }
 
 }

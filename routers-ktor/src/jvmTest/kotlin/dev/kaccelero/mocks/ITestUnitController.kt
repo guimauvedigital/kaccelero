@@ -63,4 +63,8 @@ interface ITestUnitController : IUnitController {
     @Path("GET", "/uuid/{uuid}")
     suspend fun uuid(@PathParameter uuid: UUID): String
 
+    @APIMapping
+    @Path("POST", "/generic")
+    suspend fun generic(@Payload payload: TestGenericPayload<TestCreatePayload>): String
+
 }
