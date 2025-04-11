@@ -57,7 +57,7 @@ dependencyResolutionManagement {
             )
 
             // Ktor
-            version("ktor", "2.3.13")
+            version("ktor", "2.3.13") // TODO: Upgrade to 3.x and migrate code
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").versionRef("ktor")
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef("ktor")
             library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef("ktor")
@@ -145,6 +145,7 @@ include(":i18n")
 include(":i18n-ktor")
 include(":i18n-ktor-freemarker")
 include(":database-exposed")
+include(":database-exposed-sentry")
 include(":database-ktor-sessions")
 include(":auth")
 include(":auth-apple")

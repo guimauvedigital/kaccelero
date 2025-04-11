@@ -1,24 +1,22 @@
-# jobs-rabbitmq
+# database-exposed-sentry
 
-RabbitMQ implementation of a job queue.
+Sentry extension for Exposed databases.
 
 ## Installation
 
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:jobs-rabbitmq:0.4.6")
+api("dev.kaccelero:database-exposed-sentry:0.4.6")
 ```
 
 ```xml
 
 <dependency>
     <groupId>dev.kaccelero</groupId>
-    <artifactId>jobs-rabbitmq-jvm</artifactId>
+    <artifactId>database-exposed-sentry-jvm</artifactId>
     <version>0.4.6</version>
 </dependency>
 ```
 
 ## Usage
-
-

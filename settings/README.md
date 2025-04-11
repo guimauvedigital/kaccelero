@@ -7,7 +7,7 @@ Multiplatform settings storage.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:settings:0.4.5")
+api("dev.kaccelero:settings:0.4.6")
 ```
 
 ```xml
@@ -15,6 +15,6 @@ api("dev.kaccelero:settings:0.4.5")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>settings-jvm</artifactId>
-    <version>0.4.5</version>
+    <version>0.4.6</version>
 </dependency>
 ```
