@@ -12,10 +12,10 @@ open class DelayedJobsService(
     host: String,
     username: String,
     password: String,
-    handleJobResponseUseCase: IHandleJobResponseUseCase,
+    handleJobUseCase: IHandleJobUseCase,
     keys: List<IJobKey>,
     json: Json? = null,
-) : JobsService(exchange, host, username, password, handleJobResponseUseCase, keys, json) {
+) : JobsService(exchange, host, username, password, handleJobUseCase, keys, json) {
 
     override fun exchangeDeclare(name: String) {
         channel.exchangeDeclare(

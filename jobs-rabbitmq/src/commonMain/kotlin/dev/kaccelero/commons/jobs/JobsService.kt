@@ -13,7 +13,7 @@ open class JobsService(
     open val host: String,
     open val username: String,
     open val password: String,
-    open val handleJobResponseUseCase: IHandleJobResponseUseCase,
+    open val handleJobUseCase: IHandleJobUseCase,
     open val keys: List<IJobKey>,
     open val json: Json? = null,
 ) : IJobsService {
@@ -81,7 +81,7 @@ open class JobsService(
                     coroutineScope.launch {
                         try {
                             val routingKey = routingKey(delivery.envelope.routingKey)
-                            handleJobResponseUseCase(this@JobsService, routingKey, String(delivery.body))
+                            handleJobUseCase(this@JobsService, routingKey, String(delivery.body))
                             channel.basicAck(delivery.envelope.deliveryTag, false)
                         } catch (exception: Exception) {
                             handleException(delivery, exception)
