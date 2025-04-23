@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = "dev.kaccelero"
-    version = "0.4.7"
+    version = "0.4.8"
     project.ext.set("url", "https://github.com/guimauvedigital/kaccelero")
     project.ext.set("license.name", "GPL-3.0")
     project.ext.set("license.url", "https://opensource.org/licenses/GPL-3.0")

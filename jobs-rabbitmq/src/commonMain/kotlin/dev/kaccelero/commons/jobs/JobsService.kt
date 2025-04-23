@@ -4,6 +4,7 @@ import com.rabbitmq.client.*
 import dev.kaccelero.serializers.Serialization
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -16,7 +17,10 @@ open class JobsService(
     open val handleJobUseCase: IHandleJobUseCase,
     open val keys: List<IJobKey>,
     open val json: Json? = null,
+    open val listen: Boolean = true,
 ) : IJobsService {
+
+    val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     open val sharedQueue = exchange
 
@@ -25,21 +29,48 @@ open class JobsService(
 
     init {
         try {
-            connection = ConnectionFactory().apply {
-                host = this@JobsService.host
-                username = this@JobsService.username
-                password = this@JobsService.password
-            }.newConnection()
-
-            channel = connection.createChannel()
-            channel.basicQos(1)
-            exchangeDeclare(exchange)
-            channel.queueDeclare(sharedQueue, true, false, false, null)
-            keys.filter { !it.isMultiple }.forEach { routingKey ->
-                channel.queueBind(sharedQueue, exchange, routingKey.key)
-            }
+            connect()
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    open fun connect() {
+        connection = ConnectionFactory().apply {
+            host = this@JobsService.host
+            username = this@JobsService.username
+            password = this@JobsService.password
+        }.newConnection()
+
+        channel = connection.createChannel()
+        channel.addShutdownListener { cause ->
+            if (!cause.isInitiatedByApplication) reconnect()
+        }
+        channel.basicQos(1)
+
+        exchangeDeclare(exchange)
+        channel.queueDeclare(sharedQueue, true, false, false, null)
+        keys.filter { !it.isMultiple }.forEach { routingKey ->
+            channel.queueBind(sharedQueue, exchange, routingKey.key)
+        }
+    }
+
+    @Synchronized
+    open fun reconnect() {
+        try {
+            if (channel.isOpen) channel.close()
+            if (connection.isOpen) connection.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
+            connect()
+            if (listen) coroutineScope.launch { listen() }
+        } catch (_: Exception) {
+            coroutineScope.launch {
+                delay(5000) // Try again after 5 seconds
+                reconnect()
+            }
         }
     }
 
@@ -55,20 +86,29 @@ open class JobsService(
             ?: throw IllegalArgumentException("Invalid routing key: $key")
     }
 
-    inline fun <reified T> publish(
+    suspend inline fun <reified T> publish(
         routingKey: IJobKey,
         value: T,
+        maxAttempts: Int = 3,
     ) {
-        channel.basicPublish(
-            exchange,
-            routingKey.key,
-            null,
-            (json ?: Serialization.json).encodeToString(value).toByteArray()
-        )
+        var leftAttempts = maxAttempts
+        while (leftAttempts > 0) {
+            try {
+                channel.basicPublish(
+                    exchange,
+                    routingKey.key,
+                    null,
+                    (json ?: Serialization.json).encodeToString(value).toByteArray()
+                )
+                leftAttempts = 0 // Exit loop if publish is successful
+            } catch (_: Exception) {
+                delay(5000) // Try again after 5 seconds
+                leftAttempts--
+            }
+        }
     }
 
     override suspend fun listen() {
-        val coroutineScope = CoroutineScope(Dispatchers.IO)
         val exclusiveQueue = channel.queueDeclare().queue
         keys.filter { it.isMultiple }.forEach { routingKey ->
             channel.queueBind(exclusiveQueue, exchange, routingKey.key)
