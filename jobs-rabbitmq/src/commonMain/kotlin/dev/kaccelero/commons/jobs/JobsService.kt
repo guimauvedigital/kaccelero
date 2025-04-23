@@ -24,15 +24,11 @@ open class JobsService(
 
     open val sharedQueue = exchange
 
-    open lateinit var connection: Connection
-    open lateinit var channel: Channel
+    open var connection: Connection? = null
+    open var channel: Channel? = null
 
     init {
-        try {
-            connect()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        coroutineScope.launch { reconnect() }
     }
 
     open fun connect() {
@@ -42,24 +38,24 @@ open class JobsService(
             password = this@JobsService.password
         }.newConnection()
 
-        channel = connection.createChannel()
-        channel.addShutdownListener { cause ->
+        channel = connection?.createChannel()
+        channel?.addShutdownListener { cause ->
             if (!cause.isInitiatedByApplication) reconnect()
         }
-        channel.basicQos(1)
+        channel?.basicQos(1)
 
         exchangeDeclare(exchange)
-        channel.queueDeclare(sharedQueue, true, false, false, null)
+        channel?.queueDeclare(sharedQueue, true, false, false, null)
         keys.filter { !it.isMultiple }.forEach { routingKey ->
-            channel.queueBind(sharedQueue, exchange, routingKey.key)
+            channel?.queueBind(sharedQueue, exchange, routingKey.key)
         }
     }
 
     @Synchronized
     open fun reconnect() {
         try {
-            if (channel.isOpen) channel.close()
-            if (connection.isOpen) connection.close()
+            if (channel?.isOpen == true) channel?.close()
+            if (connection?.isOpen == true) connection?.close()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -75,7 +71,7 @@ open class JobsService(
     }
 
     open fun exchangeDeclare(name: String) {
-        channel.exchangeDeclare(
+        channel?.exchangeDeclare(
             name, BuiltinExchangeType.DIRECT, true, false,
             mapOf()
         )
@@ -86,35 +82,46 @@ open class JobsService(
             ?: throw IllegalArgumentException("Invalid routing key: $key")
     }
 
-    suspend inline fun <reified T> publish(
-        routingKey: IJobKey,
-        value: T,
-        maxAttempts: Int = 3,
+    open suspend fun tryWithAttempts(
+        attempts: Int = 3,
+        delay: Long = 5000,
+        block: () -> Unit,
     ) {
-        var leftAttempts = maxAttempts
+        var leftAttempts = attempts
         while (leftAttempts > 0) {
             try {
-                channel.basicPublish(
-                    exchange,
-                    routingKey.key,
-                    null,
-                    (json ?: Serialization.json).encodeToString(value).toByteArray()
-                )
-                leftAttempts = 0 // Exit loop if publish is successful
+                block()
+                leftAttempts = 0 // Exit loop on success
             } catch (_: Exception) {
-                delay(5000) // Try again after 5 seconds
+                delay(delay) // Try again after delay
                 leftAttempts--
             }
         }
     }
 
+    suspend inline fun <reified T> publish(
+        routingKey: IJobKey,
+        value: T,
+        attempts: Int = 3,
+        delay: Long = 5000,
+    ) {
+        tryWithAttempts(attempts, delay) {
+            channel!!.basicPublish(
+                exchange,
+                routingKey.key,
+                null,
+                (json ?: Serialization.json).encodeToString(value).toByteArray()
+            )
+        }
+    }
+
     override suspend fun listen() {
-        val exclusiveQueue = channel.queueDeclare().queue
+        val exclusiveQueue = channel?.queueDeclare()?.queue ?: return
         keys.filter { it.isMultiple }.forEach { routingKey ->
-            channel.queueBind(exclusiveQueue, exchange, routingKey.key)
+            channel?.queueBind(exclusiveQueue, exchange, routingKey.key)
         }
         listOf(sharedQueue, exclusiveQueue).forEach { queue ->
-            channel.basicConsume(
+            channel?.basicConsume(
                 queue,
                 false,
                 { _, delivery ->
@@ -122,7 +129,7 @@ open class JobsService(
                         try {
                             val routingKey = routingKey(delivery.envelope.routingKey)
                             handleJobUseCase(this@JobsService, routingKey, String(delivery.body))
-                            channel.basicAck(delivery.envelope.deliveryTag, false)
+                            channel?.basicAck(delivery.envelope.deliveryTag, false)
                         } catch (exception: Exception) {
                             handleException(delivery, exception)
                         }
@@ -135,7 +142,7 @@ open class JobsService(
 
     open fun handleException(delivery: Delivery, exception: Exception) {
         exception.printStackTrace()
-        channel.basicNack(delivery.envelope.deliveryTag, false, exception !is SerializationException)
+        channel?.basicNack(delivery.envelope.deliveryTag, false, exception !is SerializationException)
     }
 
 }
