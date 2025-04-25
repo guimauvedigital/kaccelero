@@ -16,7 +16,7 @@ open class DelayedJobsService(
     keys: List<IJobKey>,
     json: Json? = null,
     listen: Boolean = true,
-    persistent: Boolean = true,
+    persistent: Boolean = false,
 ) : JobsService(exchange, host, username, password, handleJobUseCase, keys, json, listen, persistent) {
 
     override fun exchangeDeclare(name: String) {

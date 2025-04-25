@@ -18,7 +18,7 @@ open class JobsService(
     open val keys: List<IJobKey>,
     open val json: Json? = null,
     open val listen: Boolean = true,
-    open val persistent: Boolean = true,
+    open val persistent: Boolean = false,
 ) : IJobsService {
 
     val coroutineScope = CoroutineScope(Dispatchers.IO)
