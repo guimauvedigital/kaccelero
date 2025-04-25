@@ -7,7 +7,7 @@ Sentry extension for Exposed databases.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:database-exposed-sentry:0.4.8")
+api("dev.kaccelero:database-exposed-sentry:0.4.9")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:database-exposed-sentry:0.4.8")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>database-exposed-sentry-jvm</artifactId>
-    <version>0.4.8</version>
+    <version>0.4.9</version>
 </dependency>
 ```
 

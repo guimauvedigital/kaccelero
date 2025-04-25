@@ -7,7 +7,7 @@ Core of kaccelero.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:core:0.4.8")
+api("dev.kaccelero:core:0.4.9")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:core:0.4.8")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>core-jvm</artifactId>
-    <version>0.4.8</version>
+    <version>0.4.9</version>
 </dependency>
 ```
 

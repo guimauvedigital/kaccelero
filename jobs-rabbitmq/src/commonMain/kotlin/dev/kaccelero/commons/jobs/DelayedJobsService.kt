@@ -16,7 +16,8 @@ open class DelayedJobsService(
     keys: List<IJobKey>,
     json: Json? = null,
     listen: Boolean = true,
-) : JobsService(exchange, host, username, password, handleJobUseCase, keys, json, listen) {
+    persistent: Boolean = true,
+) : JobsService(exchange, host, username, password, handleJobUseCase, keys, json, listen, persistent) {
 
     override fun exchangeDeclare(name: String) {
         channel?.exchangeDeclare(
@@ -29,6 +30,7 @@ open class DelayedJobsService(
         routingKey: IJobKey,
         value: T,
         publishAt: Instant?,
+        persistent: Boolean = false,
         attempts: Int = 3,
         delay: Long = 5000,
     ) {
@@ -37,7 +39,10 @@ open class DelayedJobsService(
             channel!!.basicPublish(
                 exchange,
                 routingKey.key,
-                AMQP.BasicProperties.Builder().headers(mapOf("x-delay" to delay)).build(),
+                AMQP.BasicProperties.Builder()
+                    .deliveryMode(if (persistent || this.persistent) 2 else 1)
+                    .headers(mapOf("x-delay" to delay))
+                    .build(),
                 (json ?: Serialization.json).encodeToString(value).toByteArray()
             )
         }

@@ -18,6 +18,7 @@ open class JobsService(
     open val keys: List<IJobKey>,
     open val json: Json? = null,
     open val listen: Boolean = true,
+    open val persistent: Boolean = true,
 ) : IJobsService {
 
     val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -102,6 +103,7 @@ open class JobsService(
     suspend inline fun <reified T> publish(
         routingKey: IJobKey,
         value: T,
+        persistent: Boolean = false,
         attempts: Int = 3,
         delay: Long = 5000,
     ) {
@@ -109,7 +111,9 @@ open class JobsService(
             channel!!.basicPublish(
                 exchange,
                 routingKey.key,
-                null,
+                AMQP.BasicProperties.Builder()
+                    .deliveryMode(if (persistent || this.persistent) 2 else 1)
+                    .build(),
                 (json ?: Serialization.json).encodeToString(value).toByteArray()
             )
         }
