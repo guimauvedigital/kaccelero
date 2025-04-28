@@ -46,7 +46,7 @@ open class JobsService(
         channel?.basicQos(1)
 
         exchangeDeclare(exchange)
-        channel?.queueDeclare(sharedQueue, true, false, false, null)
+        queueDeclare(sharedQueue)
         keys.filter { !it.isMultiple }.forEach { routingKey ->
             channel?.queueBind(sharedQueue, exchange, routingKey.key)
         }
@@ -76,6 +76,16 @@ open class JobsService(
             name, BuiltinExchangeType.DIRECT, true, false,
             mapOf()
         )
+    }
+
+    open fun queueDeclare(
+        name: String,
+        durable: Boolean = true,
+        exclusive: Boolean = false,
+        autoDelete: Boolean = false,
+        arguments: Map<String, Any>? = null,
+    ) {
+        channel?.queueDeclare(name, durable, exclusive, autoDelete, arguments)
     }
 
     open fun routingKey(key: String): IJobKey {
@@ -144,7 +154,7 @@ open class JobsService(
         }
     }
 
-    open fun handleException(delivery: Delivery, exception: Exception) {
+    open suspend fun handleException(delivery: Delivery, exception: Exception) {
         exception.printStackTrace()
         channel?.basicNack(delivery.envelope.deliveryTag, false, exception !is SerializationException)
     }
