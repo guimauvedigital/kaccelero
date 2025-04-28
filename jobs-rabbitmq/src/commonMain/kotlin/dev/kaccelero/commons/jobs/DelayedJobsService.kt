@@ -1,7 +1,6 @@
 package dev.kaccelero.commons.jobs
 
 import com.rabbitmq.client.AMQP
-import com.rabbitmq.client.BuiltinExchangeType
 import dev.kaccelero.serializers.Serialization
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -17,13 +16,12 @@ open class DelayedJobsService(
     json: Json? = null,
     listen: Boolean = true,
     persistent: Boolean = false,
-) : JobsService(exchange, host, username, password, handleJobUseCase, keys, json, listen, persistent) {
+    maxXDeathCount: Int = 1,
+) : JobsService(exchange, host, username, password, handleJobUseCase, keys, json, listen, persistent, maxXDeathCount) {
 
-    override fun exchangeDeclare(name: String) {
-        channel?.exchangeDeclare(
-            name, "x-delayed-message", true, false,
-            mapOf("x-delayed-type" to BuiltinExchangeType.DIRECT.type)
-        )
+    override fun exchangeDeclare(name: String, type: String, arguments: Map<String, Any>) {
+        channel?.exchangeDeclare(name, "x-delayed-message", true, false, arguments + mapOf("x-delayed-type" to type))
+        if (maxXDeathCount > 1) channel?.exchangeDeclare("$name-dlx", type, true, false, mapOf())
     }
 
     suspend inline fun <reified T> publish(

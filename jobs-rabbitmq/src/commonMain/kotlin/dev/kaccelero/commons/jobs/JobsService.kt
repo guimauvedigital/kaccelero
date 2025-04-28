@@ -6,7 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
 open class JobsService(
@@ -19,6 +18,7 @@ open class JobsService(
     open val json: Json? = null,
     open val listen: Boolean = true,
     open val persistent: Boolean = false,
+    open val maxXDeathCount: Int = 1,
 ) : IJobsService {
 
     val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -45,10 +45,14 @@ open class JobsService(
         }
         channel?.basicQos(1)
 
+        setup()
+    }
+
+    open fun setup() {
         exchangeDeclare(exchange)
-        queueDeclare(sharedQueue)
+        queueDeclare(sharedQueue, exchange)
         keys.filter { !it.isMultiple }.forEach { routingKey ->
-            channel?.queueBind(sharedQueue, exchange, routingKey.key)
+            queueBind(sharedQueue, exchange, routingKey.key)
         }
     }
 
@@ -71,21 +75,44 @@ open class JobsService(
         }
     }
 
-    open fun exchangeDeclare(name: String) {
-        channel?.exchangeDeclare(
-            name, BuiltinExchangeType.DIRECT, true, false,
-            mapOf()
-        )
+    open fun exchangeDeclare(
+        name: String,
+        type: String = BuiltinExchangeType.DIRECT.type,
+        arguments: Map<String, Any> = mapOf(),
+    ) {
+        channel?.exchangeDeclare(name, type, true, false, arguments)
+        if (maxXDeathCount > 1) channel?.exchangeDeclare("$name-dlx", type, true, false, mapOf())
     }
 
     open fun queueDeclare(
         name: String,
+        exchange: String? = null,
         durable: Boolean = true,
         exclusive: Boolean = false,
         autoDelete: Boolean = false,
-        arguments: Map<String, Any>? = null,
+        arguments: Map<String, Any> = mapOf(),
     ) {
-        channel?.queueDeclare(name, durable, exclusive, autoDelete, arguments)
+        val args = if (maxXDeathCount > 1) {
+            channel?.queueDeclare(
+                "$name-dlx", durable, exclusive, autoDelete,
+                mapOf(
+                    "x-dead-letter-exchange" to (exchange ?: this.exchange),
+                    "x-message-ttl" to 5000,
+                )
+            )
+            mapOf("x-dead-letter-exchange" to "${exchange ?: this.exchange}-dlx") + arguments
+        } else arguments
+        channel?.queueDeclare(name, durable, exclusive, autoDelete, args)
+    }
+
+    open fun queueBind(
+        queue: String,
+        exchange: String,
+        routingKey: String,
+        arguments: Map<String, Any> = mapOf(),
+    ) {
+        channel?.queueBind(queue, exchange, routingKey, arguments)
+        if (maxXDeathCount > 1) channel?.queueBind("$queue-dlx", "$exchange-dlx", routingKey, arguments)
     }
 
     open fun routingKey(key: String): IJobKey {
@@ -155,8 +182,22 @@ open class JobsService(
     }
 
     open suspend fun handleException(delivery: Delivery, exception: Exception) {
+        if (maxXDeathCount > 1) {
+            val xDeath = delivery.properties.headers["x-death"] as? List<Map<String, Any>>
+            val retryCount = xDeath?.firstOrNull()?.get("count") as? Int ?: 0
+            val tryAgain = retryCount < maxXDeathCount
+
+            // Reject, so it goes to the DLX
+            if (tryAgain) channel?.basicReject(delivery.envelope.deliveryTag, false)
+            else handleFailedMessage(delivery, exception)
+        } else handleFailedMessage(delivery, exception)
+    }
+
+    open suspend fun handleFailedMessage(delivery: Delivery, exception: Exception) {
         exception.printStackTrace()
-        channel?.basicNack(delivery.envelope.deliveryTag, false, exception !is SerializationException)
+
+        // Discard the message. Override this method to handle failed messages.
+        channel?.basicAck(delivery.envelope.deliveryTag, false)
     }
 
 }

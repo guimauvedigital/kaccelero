@@ -7,7 +7,7 @@ Ktor implementation of routers.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:routers-ktor:0.4.9")
+api("dev.kaccelero:routers-ktor:0.4.10")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:routers-ktor:0.4.9")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>routers-ktor-jvm</artifactId>
-    <version>0.4.9</version>
+    <version>0.4.10</version>
 </dependency>
 ```
 
