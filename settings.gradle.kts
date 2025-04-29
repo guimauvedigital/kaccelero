@@ -26,9 +26,9 @@ dependencyResolutionManagement {
             plugin("kotlinjsfix", "me.nathanfallet.kotlinjsfix").version("1.0.1")
 
             // Kotlinx
-            library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
-            library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+            library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
             library("kotlin-js", "org.jetbrains.kotlin-wrappers:kotlin-js:1.0.0-pre.812")
 
             // Tests
@@ -36,7 +36,7 @@ dependencyResolutionManagement {
             library("tests-h2", "com.h2database:h2:2.3.232")
 
             // Exposed
-            version("exposed", "0.59.0")
+            version("exposed", "0.61.0")
             library("exposed-core", "org.jetbrains.exposed", "exposed-core").versionRef("exposed")
             library("exposed-jdbc", "org.jetbrains.exposed", "exposed-jdbc").versionRef("exposed")
             library("exposed-dao", "org.jetbrains.exposed", "exposed-dao").versionRef("exposed")

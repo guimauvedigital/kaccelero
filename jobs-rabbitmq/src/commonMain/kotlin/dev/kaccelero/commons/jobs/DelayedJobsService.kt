@@ -16,8 +16,21 @@ open class DelayedJobsService(
     json: Json? = null,
     listen: Boolean = true,
     persistent: Boolean = false,
+    quorum: Boolean = false,
     maxXDeathCount: Int = 1,
-) : JobsService(exchange, host, username, password, handleJobUseCase, keys, json, listen, persistent, maxXDeathCount) {
+) : JobsService(
+    exchange,
+    host,
+    username,
+    password,
+    handleJobUseCase,
+    keys,
+    json,
+    listen,
+    persistent,
+    quorum,
+    maxXDeathCount
+) {
 
     override fun exchangeDeclare(name: String, type: String, arguments: Map<String, Any>) {
         channel?.exchangeDeclare(name, "x-delayed-message", true, false, arguments + mapOf("x-delayed-type" to type))

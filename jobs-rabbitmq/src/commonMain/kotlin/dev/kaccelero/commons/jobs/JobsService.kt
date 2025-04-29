@@ -18,6 +18,7 @@ open class JobsService(
     open val json: Json? = null,
     open val listen: Boolean = true,
     open val persistent: Boolean = false,
+    open val quorum: Boolean = false,
     open val maxXDeathCount: Int = 1,
 ) : IJobsService {
 
@@ -92,17 +93,21 @@ open class JobsService(
         autoDelete: Boolean = false,
         arguments: Map<String, Any> = mapOf(),
     ) {
-        val args = if (maxXDeathCount > 1) {
-            channel?.queueDeclare(
-                "$name-dlx", durable, exclusive, autoDelete,
-                mapOf(
-                    "x-dead-letter-exchange" to (exchange ?: this.exchange),
-                    "x-message-ttl" to 5000,
+        val dlxArguments =
+            if (maxXDeathCount > 1) {
+                channel?.queueDeclare(
+                    "$name-dlx", durable, exclusive, autoDelete,
+                    mapOf(
+                        "x-dead-letter-exchange" to (exchange ?: this.exchange),
+                        "x-message-ttl" to 5000,
+                    )
                 )
-            )
-            mapOf("x-dead-letter-exchange" to "${exchange ?: this.exchange}-dlx") + arguments
-        } else arguments
-        channel?.queueDeclare(name, durable, exclusive, autoDelete, args)
+                mapOf("x-dead-letter-exchange" to "${exchange ?: this.exchange}-dlx")
+            } else emptyMap()
+        val quorumArguments =
+            if (quorum && durable && !exclusive) mapOf("x-queue-type" to "quorum")
+            else emptyMap()
+        channel?.queueDeclare(name, durable, exclusive, autoDelete, arguments + dlxArguments + quorumArguments)
     }
 
     open fun queueBind(
@@ -181,6 +186,7 @@ open class JobsService(
         }
     }
 
+    @Suppress("unchecked_cast")
     open suspend fun handleException(delivery: Delivery, exception: Exception) {
         if (maxXDeathCount > 1) {
             val xDeath = delivery.properties.headers["x-death"] as? List<Map<String, Any>>
