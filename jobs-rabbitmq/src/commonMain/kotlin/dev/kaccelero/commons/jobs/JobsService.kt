@@ -189,7 +189,7 @@ open class JobsService(
     @Suppress("unchecked_cast")
     open suspend fun handleException(delivery: Delivery, exception: Exception) {
         if (maxXDeathCount > 1) {
-            val xDeath = delivery.properties.headers["x-death"] as? List<Map<String, Any>>
+            val xDeath = delivery.properties.headers?.get("x-death") as? List<Map<String, Any>>
             val retryCount = xDeath?.firstOrNull()?.get("count") as? Int ?: 0
             val tryAgain = retryCount < maxXDeathCount
 
