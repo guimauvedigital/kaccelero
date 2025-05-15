@@ -190,7 +190,7 @@ open class JobsService(
     open suspend fun handleException(delivery: Delivery, exception: Exception) {
         if (maxXDeathCount > 1) {
             val xDeath = delivery.properties.headers?.get("x-death") as? List<Map<String, Any>>
-            val retryCount = xDeath?.firstOrNull()?.get("count") as? Int ?: 0
+            val retryCount = xDeath?.firstOrNull()?.get("count") as? Long ?: 0
             val tryAgain = retryCount < maxXDeathCount
 
             // Reject, so it goes to the DLX

@@ -7,7 +7,7 @@ A Sentry plugin for Ktor
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:health-sentry-ktor:0.4.12")
+api("dev.kaccelero:health-sentry-ktor:0.4.13")
 ```
 
 ```xml
@@ -16,7 +16,7 @@ api("dev.kaccelero:health-sentry-ktor:0.4.12")
     <dependency>
         <groupId>dev.kaccelero</groupId>
         <artifactId>health-sentry-ktor-jvm</artifactId>
-        <version>0.4.12</version>
+        <version>0.4.13</version>
     </dependency>
 </dependencies>
 ```

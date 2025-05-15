@@ -7,7 +7,7 @@ Multiplatform analytics interfaces.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:analytics:0.4.12")
+api("dev.kaccelero:analytics:0.4.13")
 ```
 
 ```xml
@@ -15,6 +15,6 @@ api("dev.kaccelero:analytics:0.4.12")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>analytics-jvm</artifactId>
-    <version>0.4.12</version>
+    <version>0.4.13</version>
 </dependency>
 ```
