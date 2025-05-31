@@ -14,7 +14,7 @@ open class MessagingService(
     open val host: String,
     open val username: String,
     open val password: String,
-    open val handleJobUseCase: IHandleMessagingUseCase,
+    open val handleMessagingUseCase: IHandleMessagingUseCase,
     open val keys: List<IMessagingKey>,
     open val json: Json? = null,
     open val listen: Boolean = true,
@@ -189,7 +189,7 @@ open class MessagingService(
                     (executeInScope ?: coroutineScope).launch {
                         try {
                             val routingKey = routingKey(delivery.envelope.routingKey)
-                            handleJobUseCase(this@MessagingService, routingKey, String(delivery.body))
+                            handleMessagingUseCase(this@MessagingService, routingKey, String(delivery.body))
                             channel?.basicAck(delivery.envelope.deliveryTag, false)
                         } catch (exception: Exception) {
                             handleException(delivery, exception)
