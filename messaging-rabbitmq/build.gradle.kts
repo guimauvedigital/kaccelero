@@ -10,8 +10,8 @@ mavenPublishing {
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
     pom {
-        name.set("jobs-rabbitmq")
-        description.set("RabbitMQ implementation of a job queue.")
+        name.set("messaging-rabbitmq")
+        description.set("RabbitMQ implementation of a messaging queue.")
         url.set(project.ext.get("url")?.toString())
         licenses {
             license {

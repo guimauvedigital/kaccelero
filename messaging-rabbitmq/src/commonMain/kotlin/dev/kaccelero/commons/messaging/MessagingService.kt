@@ -1,4 +1,4 @@
-package dev.kaccelero.commons.jobs
+package dev.kaccelero.commons.messaging
 
 import com.rabbitmq.client.*
 import dev.kaccelero.serializers.Serialization
@@ -7,20 +7,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import java.io.IOException
 
-open class JobsService(
+open class MessagingService(
     open val exchange: String,
     open val host: String,
     open val username: String,
     open val password: String,
-    open val handleJobUseCase: IHandleJobUseCase,
-    open val keys: List<IJobKey>,
+    open val handleJobUseCase: IHandleMessagingUseCase,
+    open val keys: List<IMessagingKey>,
     open val json: Json? = null,
     open val listen: Boolean = true,
     open val persistent: Boolean = false,
     open val quorum: Boolean = false,
+    open val dead: Boolean = false,
     open val maxXDeathCount: Int = 1,
-) : IJobsService {
+) : IMessagingService {
 
     val coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -35,9 +37,9 @@ open class JobsService(
 
     open fun connect() {
         connection = ConnectionFactory().apply {
-            host = this@JobsService.host
-            username = this@JobsService.username
-            password = this@JobsService.password
+            host = this@MessagingService.host
+            username = this@MessagingService.username
+            password = this@MessagingService.password
         }.newConnection()
 
         channel = connection?.createChannel()
@@ -82,7 +84,20 @@ open class JobsService(
         arguments: Map<String, Any> = mapOf(),
     ) {
         channel?.exchangeDeclare(name, type, true, false, arguments)
+        exchangeDeclareAdditionalResources(name, type, arguments)
+    }
+
+    protected open fun exchangeDeclareAdditionalResources(
+        name: String,
+        type: String,
+        arguments: Map<String, Any>,
+    ) {
         if (maxXDeathCount > 1) channel?.exchangeDeclare("$name-dlx", type, true, false, mapOf())
+        if (dead) {
+            channel?.exchangeDeclare("$name-dead", BuiltinExchangeType.FANOUT, true, false, mapOf())
+            channel?.queueDeclare("$name-dead", true, false, false, null)
+            channel?.queueBind("$name-dead", "$name-dead", "#", null)
+        }
     }
 
     open fun queueDeclare(
@@ -120,7 +135,7 @@ open class JobsService(
         if (maxXDeathCount > 1) channel?.queueBind("$queue-dlx", "$exchange-dlx", routingKey, arguments)
     }
 
-    open fun routingKey(key: String): IJobKey {
+    open fun routingKey(key: String): IMessagingKey {
         return keys.find { it.key == key }
             ?: throw IllegalArgumentException("Invalid routing key: $key")
     }
@@ -143,7 +158,7 @@ open class JobsService(
     }
 
     suspend inline fun <reified T> publish(
-        routingKey: IJobKey,
+        routingKey: IMessagingKey,
         value: T,
         persistent: Boolean = false,
         attempts: Int = 3,
@@ -161,7 +176,7 @@ open class JobsService(
         }
     }
 
-    override suspend fun listen() {
+    override suspend fun listen(executeInScope: CoroutineScope?) {
         val exclusiveQueue = channel?.queueDeclare()?.queue ?: return
         keys.filter { it.isMultiple }.forEach { routingKey ->
             channel?.queueBind(exclusiveQueue, exchange, routingKey.key)
@@ -171,10 +186,10 @@ open class JobsService(
                 queue,
                 false,
                 { _, delivery ->
-                    coroutineScope.launch {
+                    (executeInScope ?: coroutineScope).launch {
                         try {
                             val routingKey = routingKey(delivery.envelope.routingKey)
-                            handleJobUseCase(this@JobsService, routingKey, String(delivery.body))
+                            handleJobUseCase(this@MessagingService, routingKey, String(delivery.body))
                             channel?.basicAck(delivery.envelope.deliveryTag, false)
                         } catch (exception: Exception) {
                             handleException(delivery, exception)
@@ -201,6 +216,20 @@ open class JobsService(
 
     open suspend fun handleFailedMessage(delivery: Delivery, exception: Exception) {
         exception.printStackTrace()
+
+        if (dead) try {
+            val deadExchange = delivery.envelope.exchange + "-dead"
+            channel?.exchangeDeclarePassive(deadExchange) // Checks if exchange exists or throws an IOException
+
+            val updatedHeaders = (delivery.properties.headers ?: emptyMap<String, Any>()).toMutableMap()
+            updatedHeaders["x-failed-reason"] = exception.message ?: "Unknown error"
+            updatedHeaders["x-failed-at"] = System.currentTimeMillis()
+
+            val newProps = delivery.properties.builder().headers(updatedHeaders).build()
+            channel?.basicPublish(deadExchange, delivery.envelope.routingKey, newProps, delivery.body)
+        } catch (_: IOException) {
+            // Exchange does not exist, we ignore it
+        }
 
         // Discard the message. Override this method to handle failed messages.
         channel?.basicAck(delivery.envelope.deliveryTag, false)

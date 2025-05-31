@@ -7,7 +7,7 @@ Client for APIs using routers.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:routers-client-ktor:0.4.13")
+api("dev.kaccelero:routers-client-ktor:0.5.0")
 ```
 
 ```xml
@@ -15,6 +15,6 @@ api("dev.kaccelero:routers-client-ktor:0.4.13")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>routers-client-ktor-jvm</artifactId>
-    <version>0.4.13</version>
+    <version>0.5.0</version>
 </dependency>
 ```
