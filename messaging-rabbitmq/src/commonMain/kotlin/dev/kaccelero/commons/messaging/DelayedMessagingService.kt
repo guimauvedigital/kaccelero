@@ -2,6 +2,8 @@ package dev.kaccelero.commons.messaging
 
 import com.rabbitmq.client.AMQP
 import dev.kaccelero.serializers.Serialization
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
@@ -19,6 +21,7 @@ open class DelayedMessagingService(
     quorum: Boolean = false,
     dead: Boolean = false,
     maxXDeathCount: Int = 1,
+    coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) : MessagingService(
     exchange,
     host,
@@ -31,7 +34,8 @@ open class DelayedMessagingService(
     persistent,
     quorum,
     dead,
-    maxXDeathCount
+    maxXDeathCount,
+    coroutineScope
 ) {
 
     override fun exchangeDeclare(name: String, type: String, arguments: Map<String, Any>) {

@@ -22,9 +22,8 @@ open class MessagingService(
     open val quorum: Boolean = false,
     open val dead: Boolean = false,
     open val maxXDeathCount: Int = 1,
+    open val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) : IMessagingService {
-
-    val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     open val sharedQueue = exchange
 
@@ -176,7 +175,7 @@ open class MessagingService(
         }
     }
 
-    override suspend fun listen(executeInScope: CoroutineScope?) {
+    override suspend fun listen() {
         val exclusiveQueue = channel?.queueDeclare()?.queue ?: return
         keys.filter { it.isMultiple }.forEach { routingKey ->
             channel?.queueBind(exclusiveQueue, exchange, routingKey.key)
@@ -186,7 +185,7 @@ open class MessagingService(
                 queue,
                 false,
                 { _, delivery ->
-                    (executeInScope ?: coroutineScope).launch {
+                    coroutineScope.launch {
                         try {
                             val routingKey = routingKey(delivery.envelope.routingKey)
                             handleMessagingUseCase(this@MessagingService, routingKey, String(delivery.body))
