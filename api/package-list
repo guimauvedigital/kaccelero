@@ -1,0 +1,106 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository///PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/index.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/NativeSettingsRepository/#android.content.SharedPreferences?/PointingToDeclaration/settings/dev.kaccelero.repositories/[android]-native-settings-repository/-native-settings-repository.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/NativeSettingsRepository/#platform.Foundation.NSUserDefaults?#dev.kaccelero.repositories.KeychainRepository?#kotlin.Boolean/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/-native-settings-repository.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getBoolean/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-boolean.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getDouble/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-double.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getFloat/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-float.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getInt/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-int.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getLong/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-long.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getSecureBoolean/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-secure-boolean.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getSecureDouble/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-secure-double.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getSecureFloat/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-secure-float.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getSecureInt/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-secure-int.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getSecureLong/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-secure-long.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getSecureString/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-secure-string.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getSecureUUID/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-secure-u-u-i-d.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getString/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-string.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/getUUID/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/get-u-u-i-d.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/hasKey/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/has-key.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/hasSecureKey/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/has-secure-key.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/remove/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/remove.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/removeSecure/#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/remove-secure.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setBoolean/#kotlin.String#kotlin.Boolean/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-boolean.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setDouble/#kotlin.String#kotlin.Double/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-double.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setFloat/#kotlin.String#kotlin.Float/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-float.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setInt/#kotlin.String#kotlin.Int/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-int.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setLong/#kotlin.String#kotlin.Long/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-long.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureBoolean/#kotlin.String#kotlin.Boolean/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-secure-boolean.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureDouble/#kotlin.String#kotlin.Double/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-secure-double.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureFloat/#kotlin.String#kotlin.Float/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-secure-float.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureInt/#kotlin.String#kotlin.Int/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-secure-int.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureLong/#kotlin.String#kotlin.Long/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-secure-long.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureString/#kotlin.String#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-secure-string.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureUUID/#kotlin.String#[Error type: Unresolved type for UUID]/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-secure-u-u-i-d.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setSecureUUID/#kotlin.String#dev.kaccelero.models.UUID/PointingToDeclaration/settings/dev.kaccelero.repositories/[android]-native-settings-repository/set-secure-u-u-i-d.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setString/#kotlin.String#kotlin.String/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-string.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setUUID/#kotlin.String#[Error type: Unresolved type for UUID]/PointingToDeclaration/settings/dev.kaccelero.repositories/[apple]-native-settings-repository/set-u-u-i-d.html
+$dokka.location:dev.kaccelero.repositories/NativeSettingsRepository/setUUID/#kotlin.String#dev.kaccelero.models.UUID/PointingToDeclaration/settings/dev.kaccelero.repositories/[android]-native-settings-repository/set-u-u-i-d.html
+module:analytics
+dev.kaccelero.commons.ads
+dev.kaccelero.commons.analytics
+dev.kaccelero.commons.subscriptions
+dev.kaccelero.repositories
+module:auth
+dev.kaccelero.commons.auth
+module:auth-apple
+dev.kaccelero.commons.auth
+module:controllers
+dev.kaccelero.controllers
+module:core
+dev.kaccelero.annotations
+dev.kaccelero.commons.analytics
+dev.kaccelero.commons.application
+dev.kaccelero.commons.auth
+dev.kaccelero.commons.emails
+dev.kaccelero.commons.exceptions
+dev.kaccelero.commons.localization
+dev.kaccelero.commons.messaging
+dev.kaccelero.commons.permissions
+dev.kaccelero.commons.repositories
+dev.kaccelero.commons.subscriptions
+dev.kaccelero.extensions
+dev.kaccelero.models
+dev.kaccelero.repositories
+dev.kaccelero.serializers
+dev.kaccelero.usecases
+module:database-exposed
+dev.kaccelero.database
+module:database-exposed-sentry
+dev.kaccelero.database
+module:database-ktor-sessions
+dev.kaccelero.commons.sessions
+module:health-ktor
+dev.kaccelero.plugins
+module:health-sentry-ktor
+dev.kaccelero.commons.exceptions
+dev.kaccelero.plugins
+module:i18n
+dev.kaccelero.commons.localization
+module:i18n-ktor
+dev.kaccelero.commons.localization
+dev.kaccelero.plugins
+module:i18n-ktor-freemarker
+dev.kaccelero.commons.localization
+module:messaging-rabbitmq
+dev.kaccelero.commons.messaging
+module:routers
+dev.kaccelero.annotations
+dev.kaccelero.routers
+module:routers-client-ktor
+dev.kaccelero.client
+dev.kaccelero.commons.auth
+dev.kaccelero.commons.exceptions
+dev.kaccelero.repositories
+module:routers-ktor
+dev.kaccelero.annotations
+dev.kaccelero.commons.auth
+dev.kaccelero.commons.exceptions
+dev.kaccelero.commons.responses
+dev.kaccelero.commons.users
+dev.kaccelero.plugins
+dev.kaccelero.routers
+module:settings
+dev.kaccelero.extensions
+dev.kaccelero.repositories

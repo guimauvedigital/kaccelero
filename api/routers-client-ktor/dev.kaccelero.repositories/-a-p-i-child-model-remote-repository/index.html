@@ -1,0 +1,431 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>APIChildModelRemoteRepository</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+<a class="library-name--link" href="../../../index.html">
+                    kaccelero
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">0.5.1
+        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":routers-client-ktor:dokkaHtmlPartial/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filter=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    kaccelero
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="routers-client-ktor::dev.kaccelero.repositories/APIChildModelRemoteRepository///PointingToDeclaration//-1353655814">
+  <div class="breadcrumbs"><a href="../../index.html">routers-client-ktor</a><span class="delimiter">/</span><a href="../index.html">dev.kaccelero.repositories</a><span class="delimiter">/</span><span class="current">APIChildModelRemoteRepository</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>APIChild</span><wbr><span>Model</span><wbr><span>Remote</span><wbr><span><span>Repository</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">APIChildModelRemoteRepository</a><span class="token operator">&lt;</span><a href="index.html">Model</a><span class="token operator"> : </span><a href="../../../core/dev.kaccelero.models/-i-child-model/index.html">IChildModel</a><span class="token operator">&lt;</span><a href="index.html">Id</a><span class="token punctuation">, </span><a href="index.html">CreatePayload</a><span class="token punctuation">, </span><a href="index.html">UpdatePayload</a><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><a href="index.html">Id</a><span class="token punctuation">, </span><a href="index.html">CreatePayload</a><span class="token operator"> : </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span><a href="index.html">UpdatePayload</a><span class="token operator"> : </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>modelTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>createPayloadTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>updatePayloadTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>listTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>client<span class="token operator">: </span><a href="../../dev.kaccelero.client/-i-a-p-i-client/index.html">IAPIClient</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>parentRepository<span class="token operator">: </span><a href="../-i-a-p-i-child-model-remote-repository/index.html">IAPIChildModelRemoteRepository</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token punctuation">, </span><span class="token operator">*</span><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">route<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">prefix<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="../-i-a-p-i-child-model-remote-repository/index.html">IAPIChildModelRemoteRepository</a><span class="token operator">&lt;</span><a href="index.html">Model</a><span class="token punctuation">, </span><a href="index.html">Id</a><span class="token punctuation">, </span><a href="index.html">CreatePayload</a><span class="token punctuation">, </span><a href="index.html">UpdatePayload</a><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token operator">&gt; </span></div><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-a-p-i-model-remote-repository/index.html">APIModelRemoteRepository</a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1248053326%2FConstructors%2F-1353655814" anchor-label="APIChildModelRemoteRepository" id="1248053326%2FConstructors%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-p-i-child-model-remote-repository.html"><span>APIChild</span><wbr><span>Model</span><wbr><span>Remote</span><wbr><span><span>Repository</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1248053326%2FConstructors%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">modelTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter ">createPayloadTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter ">updatePayloadTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter ">listTypeInfo<span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span><span class="token punctuation">, </span></span><span class="parameter ">client<span class="token operator">: </span><a href="../../dev.kaccelero.client/-i-a-p-i-client/index.html">IAPIClient</a><span class="token punctuation">, </span></span><span class="parameter ">parentRepository<span class="token operator">: </span><a href="../-i-a-p-i-child-model-remote-repository/index.html">IAPIChildModelRemoteRepository</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token punctuation">, </span><span class="token operator">*</span><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">route<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">prefix<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1537602069%2FProperties%2F-1353655814" anchor-label="client" id="1537602069%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="client.html"><span><span>client</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1537602069%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="client.html">client</a><span class="token operator">: </span><a href="../../dev.kaccelero.client/-i-a-p-i-client/index.html">IAPIClient</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1572410176%2FProperties%2F-1353655814" anchor-label="createPayloadTypeInfo" id="-1572410176%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-payload-type-info.html"><span>create</span><wbr><span>Payload</span><wbr><span>Type</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1572410176%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">val </span><a href="create-payload-type-info.html">createPayloadTypeInfo</a><span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1036078149%2FProperties%2F-1353655814" anchor-label="id" id="1036078149%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="id.html"><span><span>id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1036078149%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="id.html">id</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1141565894%2FProperties%2F-1353655814" anchor-label="listTypeInfo" id="-1141565894%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="list-type-info.html"><span>list</span><wbr><span>Type</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1141565894%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">val </span><a href="list-type-info.html">listTypeInfo</a><span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-251525527%2FProperties%2F-1353655814" anchor-label="modelTypeInfo" id="-251525527%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="model-type-info.html"><span>model</span><wbr><span>Type</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-251525527%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">val </span><a href="model-type-info.html">modelTypeInfo</a><span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1536491860%2FProperties%2F-1353655814" anchor-label="parentRepository" id="-1536491860%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="parent-repository.html"><span>parent</span><wbr><span><span>Repository</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1536491860%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="parent-repository.html">parentRepository</a><span class="token operator">: </span><a href="../-i-a-p-i-child-model-remote-repository/index.html">IAPIChildModelRemoteRepository</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token punctuation">, </span><span class="token operator">*</span><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1545236178%2FProperties%2F-1353655814" anchor-label="prefix" id="-1545236178%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="prefix.html"><span><span>prefix</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1545236178%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="prefix.html">prefix</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1835886961%2FProperties%2F-1353655814" anchor-label="route" id="1835886961%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="route.html"><span><span>route</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1835886961%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="route.html">route</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1266617459%2FProperties%2F-1353655814" anchor-label="updatePayloadTypeInfo" id="-1266617459%2FProperties%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-payload-type-info.html"><span>update</span><wbr><span>Payload</span><wbr><span>Type</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1266617459%2FProperties%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">override </span><span class="token keyword">val </span><a href="update-payload-type-info.html">updatePayloadTypeInfo</a><span class="token operator">: </span><span data-unresolved-link="io.ktor.util.reflect/TypeInfo///PointingToDeclaration/">TypeInfo</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-791365928%2FFunctions%2F-1353655814" anchor-label="constructFullRoute" id="-791365928%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="construct-full-route.html"><span>construct</span><wbr><span>Full</span><wbr><span><span>Route</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-791365928%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="construct-full-route.html"><span class="token function">constructFullRoute</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1296119291%2FFunctions%2F-1353655814" anchor-label="constructRouteIncludingParent" id="-1296119291%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="construct-route-including-parent.html"><span>construct</span><wbr><span>Route</span><wbr><span>Including</span><wbr><span><span>Parent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1296119291%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="construct-route-including-parent.html"><span class="token function">constructRouteIncludingParent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parentId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="861587407%2FFunctions%2F-1353655814" anchor-label="count" id="861587407%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-i-a-p-i-child-model-remote-repository/index.html#861587407%2FFunctions%2F-1353655814"><span><span>count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="861587407%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="../-i-a-p-i-child-model-remote-repository/index.html#861587407%2FFunctions%2F-1353655814"><span class="token function">count</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-i-context/index.html">IContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1029454657%2FFunctions%2F-1353655814" anchor-label="create" id="1029454657%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create.html"><span><span>create</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1029454657%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="create.html"><span class="token function">create</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="index.html">CreatePayload</a><span class="token punctuation">, </span></span><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-i-context/index.html">IContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Model</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-502061047%2FFunctions%2F-1353655814" anchor-label="delete" id="-502061047%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="delete.html"><span><span>delete</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-502061047%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="delete.html"><span class="token function">delete</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="index.html">Id</a><span class="token punctuation">, </span></span><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-i-context/index.html">IContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1077610884%2FFunctions%2F-1353655814" anchor-label="encodePagination" id="-1077610884%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="encode-pagination.html"><span>encode</span><wbr><span><span>Pagination</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1077610884%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><span data-unresolved-link="io.ktor.client.request/HttpRequestBuilder///PointingToDeclaration/">HttpRequestBuilder</span><span class="token punctuation">.</span><a href="encode-pagination.html"><span class="token function">encodePagination</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pagination<span class="token operator">: </span><a href="../../../core/dev.kaccelero.repositories/-pagination/index.html">Pagination</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-141394121%2FFunctions%2F-1353655814" anchor-label="encodePaginationOptions" id="-141394121%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="encode-pagination-options.html"><span>encode</span><wbr><span>Pagination</span><wbr><span><span>Options</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-141394121%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><span data-unresolved-link="io.ktor.client.request/HttpRequestBuilder///PointingToDeclaration/">HttpRequestBuilder</span><span class="token punctuation">.</span><a href="encode-pagination-options.html"><span class="token function">encodePaginationOptions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">options<span class="token operator">: </span><a href="../../../core/dev.kaccelero.repositories/-i-pagination-options/index.html">IPaginationOptions</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-334752616%2FFunctions%2F-1353655814" anchor-label="get" id="-334752616%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get.html"><span><span>get</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-334752616%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="get.html"><span class="token function">get</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="index.html">Id</a><span class="token punctuation">, </span></span><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-i-context/index.html">IContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Model</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-521042759%2FFunctions%2F-1353655814" anchor-label="list" id="-521042759%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="list.html"><span><span>list</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-521042759%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="list.html"><span class="token function">list</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-i-context/index.html">IContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="index.html">Model</a><span class="token operator">&gt;</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="list.html"><span class="token function">list</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pagination<span class="token operator">: </span><a href="../../../core/dev.kaccelero.repositories/-pagination/index.html">Pagination</a><span class="token punctuation">, </span></span><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-i-context/index.html">IContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="index.html">Model</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-620061267%2FFunctions%2F-1353655814" anchor-label="update" id="-620061267%2FFunctions%2F-1353655814" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":routers-client-ktor:dokkaHtmlPartial/commonMain" data-filterable-set=":routers-client-ktor:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update.html"><span><span>update</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-620061267%2FFunctions%2F-1353655814"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":routers-client-ktor:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="update.html"><span class="token function">update</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="index.html">Id</a><span class="token punctuation">, </span></span><span class="parameter ">payload<span class="token operator">: </span><a href="index.html">UpdatePayload</a><span class="token punctuation">, </span></span><span class="parameter ">parentId<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-recursive-id/index.html">RecursiveId</a><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token punctuation">, </span><a href="index.html">ParentId</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">context<span class="token operator">: </span><a href="../../../core/dev.kaccelero.models/-i-context/index.html">IContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Model</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2025 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
