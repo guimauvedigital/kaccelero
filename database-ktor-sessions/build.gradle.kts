@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.serialization)
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.maven)
 }
 

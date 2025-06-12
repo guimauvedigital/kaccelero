@@ -20,6 +20,7 @@ dependencyResolutionManagement {
             plugin("serialization", "org.jetbrains.kotlin.plugin.serialization").versionRef("kotlin")
             plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.3")
             plugin("ksp", "com.google.devtools.ksp").version("2.1.10-1.0.30")
+            plugin("dokka", "org.jetbrains.dokka").version("2.0.0")
             plugin("maven", "com.vanniktech.maven.publish").version("0.30.0")
             plugin("npm", "dev.petuska.npm.publish").version("3.4.1")
             plugin("android-library", "com.android.library").versionRef("agp")

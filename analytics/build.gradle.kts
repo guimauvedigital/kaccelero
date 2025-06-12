@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.maven)
 }
 
