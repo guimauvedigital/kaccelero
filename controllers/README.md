@@ -7,7 +7,7 @@ Controllers of kaccelero.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:controllers:0.5.1")
+api("dev.kaccelero:controllers:0.5.2")
 ```
 
 ```xml
@@ -15,6 +15,6 @@ api("dev.kaccelero:controllers:0.5.1")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>controllers-jvm</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
 </dependency>
 ```

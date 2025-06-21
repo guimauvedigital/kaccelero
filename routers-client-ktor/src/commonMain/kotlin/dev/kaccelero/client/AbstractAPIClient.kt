@@ -23,10 +23,11 @@ abstract class AbstractAPIClient(
     override val logoutUseCase: ILogoutUseCase? = null,
     json: Json? = null,
     engine: HttpClientEngine? = null,
+    block: HttpClientConfig<*>.() -> Unit = {},
 ) : IAPIClient {
 
     private val httpClient = run {
-        val block: HttpClientConfig<*>.() -> Unit = {
+        val innerBlock: HttpClientConfig<*>.() -> Unit = {
             expectSuccess = true
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { exception, _ ->
@@ -40,8 +41,9 @@ abstract class AbstractAPIClient(
             install(ContentNegotiation) {
                 json(json ?: Serialization.json)
             }
+            block()
         }
-        engine?.let { HttpClient(it, block) } ?: HttpClient(block)
+        engine?.let { HttpClient(it, innerBlock) } ?: HttpClient(innerBlock)
     }
 
     override suspend fun request(
