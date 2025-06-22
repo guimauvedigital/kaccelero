@@ -10,13 +10,13 @@ external val uuid: dynamic
 
 @JsExport
 @Serializable(UUIDSerializer::class)
-actual data class UUID(val jsUUID: Uint8Array) {
+actual data class UUID(val jsUUID: Uint8Array<*>) {
 
     @JsName("randomUUID")
-    actual constructor() : this(uuid.v4() as Uint8Array)
+    actual constructor() : this(uuid.v4() as Uint8Array<*>)
 
     @JsName("fromString")
-    actual constructor(string: String) : this(uuid.parse(string) as Uint8Array)
+    actual constructor(string: String) : this(uuid.parse(string) as Uint8Array<*>)
 
     actual override fun toString(): String = uuid.stringify(jsUUID).lowercase()
 

@@ -37,7 +37,6 @@ mavenPublishing {
 kotlin {
     jvmToolchain(21)
     jvm {
-        withJava()
         testRuns.named("test") {
             executionTask.configure {
                 useJUnitPlatform()
