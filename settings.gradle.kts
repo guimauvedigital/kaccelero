@@ -30,10 +30,10 @@ dependencyResolutionManagement {
             library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
             library("kotlinx-datetime", "org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
-            library("kotlin-js", "org.jetbrains.kotlin-wrappers:kotlin-js:1.0.0-pre.812")
+            library("kotlin-js", "org.jetbrains.kotlin-wrappers:kotlin-js:2025.6.8")
 
             // Tests
-            library("tests-mockk", "io.mockk:mockk:1.13.12")
+            library("tests-mockk", "io.mockk:mockk:1.14.4")
             library("tests-h2", "com.h2database:h2:2.3.232")
 
             // Exposed
@@ -58,7 +58,7 @@ dependencyResolutionManagement {
             )
 
             // Ktor
-            version("ktor", "2.3.13") // TODO: Upgrade to 3.x and migrate code
+            version("ktor", "3.1.3")
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").versionRef("ktor")
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef("ktor")
             library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef("ktor")
@@ -128,9 +128,9 @@ dependencyResolutionManagement {
             )
 
             // Others
-            library("bcrypt", "at.favre.lib:bcrypt:0.9.0")
-            library("sentry", "io.sentry:sentry-kotlin-extensions:7.10.0")
-            library("amqp", "com.rabbitmq:amqp-client:5.21.0")
+            library("bcrypt", "at.favre.lib:bcrypt:0.10.2")
+            library("sentry", "io.sentry:sentry-kotlin-extensions:8.14.0")
+            library("amqp", "com.rabbitmq:amqp-client:5.25.0")
         }
     }
 }

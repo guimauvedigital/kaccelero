@@ -7,7 +7,7 @@ Health check for Ktor projects.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:health-ktor:0.5.2")
+api("dev.kaccelero:health-ktor:0.6.0")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:health-ktor:0.5.2")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>health-ktor-jvm</artifactId>
-    <version>0.5.2</version>
+    <version>0.6.0</version>
 </dependency>
 ```
 

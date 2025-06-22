@@ -3,7 +3,7 @@ package dev.kaccelero.plugins
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.*
 import io.ktor.server.request.*
-import io.ktor.server.routing.*
+import io.ktor.server.routing.RoutingRoot.Plugin.RoutingCallStarted
 import io.ktor.util.*
 import io.sentry.*
 import io.sentry.protocol.Request
@@ -39,7 +39,7 @@ class KtorSentry private constructor() {
                 }
 
                 // Add hooks
-                MonitoringEvent(Routing.RoutingCallStarted).install(pipeline) { call ->
+                MonitoringEvent(RoutingCallStarted).install(pipeline) { call ->
                     val transaction = Sentry.startTransaction(
                         /* name = */ "${call.request.httpMethod.value} ${call.request.path()}",
                         /* operation = */ "call",
@@ -66,7 +66,7 @@ class KtorSentry private constructor() {
                     transaction.startChild("setup", "Call setup")
                 }
 
-                MonitoringEvent(Routing.RoutingCallStarted).install(pipeline) { call ->
+                MonitoringEvent(RoutingCallStarted).install(pipeline) { call ->
                     call.sentryTransactionOrNull()?.let { t ->
                         t.latestActiveSpan?.finish(SpanStatus.OK)
                         t.setTag("route", call.route.parent.toString())
