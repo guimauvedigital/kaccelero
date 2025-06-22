@@ -58,7 +58,7 @@ dependencyResolutionManagement {
             )
 
             // Ktor
-            version("ktor", "2.3.13") // TODO: Upgrade to 3.x and migrate code
+            version("ktor", "3.1.3")
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").versionRef("ktor")
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef("ktor")
             library("ktor-server-test-host", "io.ktor", "ktor-server-test-host").versionRef("ktor")
