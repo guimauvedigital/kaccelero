@@ -8,12 +8,14 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.Serializable
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 
 class TestApiKeyAuth {
 
+    @Serializable
     private data class ApiKeyPrincipal(val key: String) : Principal
 
     private val defaultHeader = "X-Api-Key"

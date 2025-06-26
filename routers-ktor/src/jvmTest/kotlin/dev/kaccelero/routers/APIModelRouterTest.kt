@@ -307,7 +307,7 @@ class APIModelRouterTest {
         }
         assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals(
-            mapOf("error" to "Illegal input: Field 'string' is required for type with serial name 'dev.kaccelero.mocks.TestCreatePayload', but it was missing at path: \$"),
+            mapOf("error" to "Illegal input: Field 'string' is required for type with serial name 'dev.kaccelero.mocks.TestCreatePayload', but it was missing at path: $"),
             response.body()
         )
     }
