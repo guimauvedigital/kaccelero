@@ -295,6 +295,24 @@ class APIModelRouterTest {
     }
 
     @Test
+    fun testAPIPostRouteInvalidJson() = testApplication {
+        val client = installApp(this)
+        val router = createRouter(mockk())
+        routing {
+            router.createRoutes(this)
+        }
+        val response = client.post("/api/testmodels") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertEquals(
+            mapOf("error" to "Illegal input: Field 'string' is required for type with serial name 'dev.kaccelero.mocks.TestCreatePayload', but it was missing at path: \$"),
+            response.body()
+        )
+    }
+
+    @Test
     fun testAPIPostRouteOpenAPI() = testApplication {
         val client = installApp(this)
         val controller = mockk<ITestModelController>()
