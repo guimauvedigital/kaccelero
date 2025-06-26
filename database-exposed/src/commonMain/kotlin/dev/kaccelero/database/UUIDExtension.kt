@@ -24,6 +24,10 @@ infix fun ExpressionWithColumnType<java.util.UUID>.eq(t: UUID): Op<Boolean> =
 infix fun ExpressionWithColumnType<EntityID<java.util.UUID>>.eq(t: UUID): Op<Boolean> =
     EqOp(this, wrap(EntityID(t.javaUUID, columnType.table)))
 
+@JvmName("eqNullableID")
+infix fun ExpressionWithColumnType<java.util.UUID?>.eq(t: UUID?): Op<Boolean> =
+    EqOp(this, wrap(t?.javaUUID))
+
 // MARK: - neq
 
 infix fun ExpressionWithColumnType<java.util.UUID>.neq(t: UUID): Op<Boolean> =
@@ -32,6 +36,10 @@ infix fun ExpressionWithColumnType<java.util.UUID>.neq(t: UUID): Op<Boolean> =
 @JvmName("neqEntityID")
 infix fun ExpressionWithColumnType<EntityID<java.util.UUID>>.neq(t: UUID): Op<Boolean> =
     NeqOp(this, wrap(EntityID(t.javaUUID, columnType.table)))
+
+@JvmName("neqNullableID")
+infix fun ExpressionWithColumnType<java.util.UUID?>.neq(t: UUID?): Op<Boolean> =
+    NeqOp(this, wrap(t?.javaUUID))
 
 // MARK: - inList
 
@@ -42,6 +50,10 @@ infix fun ExpressionWithColumnType<java.util.UUID>.inList(list: Iterable<UUID>):
 infix fun ExpressionWithColumnType<EntityID<java.util.UUID>>.inList(list: Iterable<UUID>): InListOrNotInListBaseOp<EntityID<java.util.UUID>> =
     SingleValueInListOp(this, list.map { EntityID(it.javaUUID, columnType.table) }, isInList = true)
 
+@JvmName("inListNullableID")
+infix fun ExpressionWithColumnType<java.util.UUID?>.inList(list: Iterable<UUID>): InListOrNotInListBaseOp<java.util.UUID?> =
+    SingleValueInListOp(this, list.map { it.javaUUID }, isInList = true)
+
 // MARK: - notInList
 
 infix fun ExpressionWithColumnType<java.util.UUID>.notInList(list: Iterable<UUID>): InListOrNotInListBaseOp<java.util.UUID> =
@@ -51,7 +63,15 @@ infix fun ExpressionWithColumnType<java.util.UUID>.notInList(list: Iterable<UUID
 infix fun ExpressionWithColumnType<EntityID<java.util.UUID>>.notInList(list: Iterable<UUID>): InListOrNotInListBaseOp<EntityID<java.util.UUID>> =
     SingleValueInListOp(this, list.map { EntityID(it.javaUUID, columnType.table) }, isInList = false)
 
+@JvmName("notInListNullableID")
+infix fun ExpressionWithColumnType<java.util.UUID?>.notInList(list: Iterable<UUID>): InListOrNotInListBaseOp<java.util.UUID?> =
+    SingleValueInListOp(this, list.map { it.javaUUID }, isInList = false)
+
 // MARK: - set
 
 operator fun <T> UpdateBuilder<T>.set(column: Column<java.util.UUID>, value: UUID) =
     set(column, value.javaUUID)
+
+@JvmName("setNullableID")
+operator fun <T> UpdateBuilder<T>.set(column: Column<java.util.UUID?>, value: UUID?) =
+    set(column, value?.javaUUID)
