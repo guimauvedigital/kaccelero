@@ -44,7 +44,7 @@ open class TemplateChildModelRouter<Model : IChildModel<Id, CreatePayload, Updat
 ) {
 
     open suspend fun handleExceptionTemplate(
-        exception: Exception,
+        exception: Throwable,
         call: ApplicationCall,
         fromTemplate: String,
     ) {

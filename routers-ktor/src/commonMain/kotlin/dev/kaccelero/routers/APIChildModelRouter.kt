@@ -9,7 +9,10 @@ import dev.kaccelero.controllers.IChildModelController
 import dev.kaccelero.models.IChildModel
 import dev.kaccelero.models.UnitModel
 import io.ktor.http.*
+import io.ktor.serialization.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
+import io.ktor.server.plugins.ContentTransformationException
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -42,7 +45,7 @@ open class APIChildModelRouter<Model : IChildModel<Id, CreatePayload, UpdatePayl
     prefix ?: "/api"
 ) {
 
-    open suspend fun handleExceptionAPI(exception: Exception, call: ApplicationCall) {
+    open suspend fun handleExceptionAPI(exception: Throwable, call: ApplicationCall) {
         when (exception) {
             is RedirectResponse -> exception.respond(call)
 
@@ -58,6 +61,13 @@ open class APIChildModelRouter<Model : IChildModel<Id, CreatePayload, UpdatePayl
                 ), call
             )
 
+            is JsonConvertException -> handleExceptionAPI(
+                ControllerException(
+                    HttpStatusCode.BadRequest,
+                    exception.message ?: "error_body_invalid"
+                ), call
+            )
+
             is PropertyValidatorException -> handleExceptionAPI(
                 ControllerException(HttpStatusCode.BadRequest, "${route}_${exception.key}_${exception.reason}"), call
             )
@@ -65,6 +75,8 @@ open class APIChildModelRouter<Model : IChildModel<Id, CreatePayload, UpdatePayl
             is ContentTransformationException -> handleExceptionAPI(
                 ControllerException(HttpStatusCode.BadRequest, "error_body_invalid"), call
             )
+
+            is BadRequestException -> handleExceptionAPI(exception.cause ?: throw exception, call)
 
             else -> throw exception
         }
