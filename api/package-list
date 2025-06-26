@@ -101,6 +101,8 @@ dev.kaccelero.commons.responses
 dev.kaccelero.commons.users
 dev.kaccelero.plugins
 dev.kaccelero.routers
+module:security-key-ktor
+dev.kaccelero.plugins
 module:settings
 dev.kaccelero.extensions
 dev.kaccelero.repositories
