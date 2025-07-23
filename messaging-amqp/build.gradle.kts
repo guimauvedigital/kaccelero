@@ -12,7 +12,7 @@ mavenPublishing {
     signAllPublications()
     pom {
         name.set("messaging-amqp")
-        description.set("AMQP/RabbitMQ implementation of a messaging queue.")
+        description.set("AMQP/RabbitMQ implementation of a messaging queue service.")
         url.set(project.ext.get("url")?.toString())
         licenses {
             license {

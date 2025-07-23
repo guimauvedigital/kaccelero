@@ -1,6 +1,6 @@
-# jobs-rabbitmq
+# messaging-amqp
 
-RabbitMQ implementation of a job queue.
+AMQP/RabbitMQ implementation of a messaging queue service.
 
 ## Installation
 
