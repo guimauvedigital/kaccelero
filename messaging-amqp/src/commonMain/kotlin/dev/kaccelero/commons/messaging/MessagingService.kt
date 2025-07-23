@@ -254,8 +254,9 @@ open class MessagingService(
     @Suppress("unchecked_cast")
     open suspend fun handleException(delivery: AMQPResponse.Channel.Message.Delivery, exception: Exception) {
         if (maxXDeathCount > 1) {
-            val xDeath = delivery.message.properties.headers?.get("x-death") as? List<Map<String, Any>>
-            val retryCount = xDeath?.firstOrNull()?.get("count") as? Long ?: 0
+            val xDeathArray = delivery.message.properties.headers?.get("x-death") as? Field.Array
+            val xDeath = xDeathArray?.value?.firstOrNull() as? Field.Table
+            val retryCount = (xDeath?.value?.get("count") as? Field.Long)?.value ?: 0
             val tryAgain = retryCount < maxXDeathCount
 
             // Reject, so it goes to the DLX
