@@ -7,14 +7,14 @@ RabbitMQ implementation of a job queue.
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:messaging-rabbitmq:0.6.1")
+api("dev.kaccelero:messaging-amqp:0.6.1")
 ```
 
 ```xml
 
 <dependency>
     <groupId>dev.kaccelero</groupId>
-    <artifactId>messaging-rabbitmq-jvm</artifactId>
+    <artifactId>messaging-amqp-jvm</artifactId>
     <version>0.6.1</version>
 </dependency>
 ```

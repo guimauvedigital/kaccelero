@@ -130,7 +130,7 @@ dependencyResolutionManagement {
             // Others
             library("bcrypt", "at.favre.lib:bcrypt:0.10.2")
             library("sentry", "io.sentry:sentry-kotlin-extensions:8.14.0")
-            library("amqp", "com.rabbitmq:amqp-client:5.25.0")
+            library("amqp", "dev.kourier:amqp-client:0.0.6")
         }
     }
 }
@@ -141,7 +141,7 @@ include(":controllers")
 include(":routers")
 include(":routers-ktor")
 include(":routers-client-ktor")
-include(":messaging-rabbitmq")
+include(":messaging-amqp")
 include(":i18n")
 include(":i18n-ktor")
 include(":i18n-ktor-freemarker")
