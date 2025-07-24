@@ -1,13 +1,17 @@
 package dev.kaccelero.commons.messaging
 
 import dev.kaccelero.serializers.Serialization
-import dev.kourier.amqp.*
+import dev.kourier.amqp.AMQPResponse
+import dev.kourier.amqp.BuiltinExchangeType
+import dev.kourier.amqp.Field
+import dev.kourier.amqp.Properties
 import dev.kourier.amqp.channel.AMQPChannel
 import dev.kourier.amqp.connection.AMQPConnection
-import dev.kourier.amqp.connection.amqpConfig
 import dev.kourier.amqp.connection.createAMQPConnection
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 
@@ -33,19 +37,22 @@ open class MessagingService(
     open var connection: AMQPConnection? = null
     open var channel: AMQPChannel? = null
 
+    protected val isConnectingMutex = Mutex()
+    protected var isConnecting = false
+
     init {
         coroutineScope.launch { reconnect() }
     }
 
     open suspend fun connect() {
-        connection = createAMQPConnection(coroutineScope, amqpConfig {
+        connection = createAMQPConnection(coroutineScope) {
             server {
                 host = this@MessagingService.host
                 user = this@MessagingService.user
                 password = this@MessagingService.password
                 connectionName = this@MessagingService.connectionName
             }
-        })
+        }
 
         channel = connection?.openChannel()
         coroutineScope.launch {
@@ -66,12 +73,19 @@ open class MessagingService(
     }
 
     open suspend fun reconnect() {
+        isConnectingMutex.withLock {
+            if (isConnecting) return
+            isConnecting = true
+        }
         runCatching {
-            channel?.close()
-            connection?.close()
+            if (channel?.channelClosed?.isCompleted == false) channel?.close()
+            if (connection?.connectionClosed?.isCompleted == false) connection?.close()
+            channel = null
+            connection = null
         }
         try {
             connect()
+            isConnectingMutex.withLock { isConnecting = false }
             if (listen) coroutineScope.launch { listen() }
         } catch (_: Exception) {
             coroutineScope.launch {
@@ -233,20 +247,21 @@ open class MessagingService(
                 queue,
                 noAck = false,
                 onDelivery = { delivery ->
-                    coroutineScope.launch {
-                        try {
-                            val routingKey = routingKey(delivery.message.routingKey)
-                            handleMessagingUseCase(
-                                this@MessagingService,
-                                routingKey,
-                                delivery.message.body.decodeToString()
-                            )
-                            channel?.basicAck(delivery.message.deliveryTag, false)
-                        } catch (exception: Exception) {
-                            handleException(delivery, exception)
-                        }
+                    try {
+                        val routingKey = routingKey(delivery.message.routingKey)
+                        handleMessagingUseCase(
+                            this@MessagingService,
+                            routingKey,
+                            delivery.message.body.decodeToString()
+                        )
+                        channel?.basicAck(delivery.message.deliveryTag, false)
+                    } catch (exception: Exception) {
+                        handleException(delivery, exception)
                     }
                 },
+                onCanceled = {
+                    reconnect()
+                }
             )
         }
     }
@@ -268,8 +283,8 @@ open class MessagingService(
     open suspend fun handleFailedMessage(delivery: AMQPResponse.Channel.Message.Delivery, exception: Exception) {
         exception.printStackTrace()
 
-        if (dead) try {
-            val tempChannel = connection?.openChannel() ?: return
+        if (dead) runCatching { // if exchange does not exist, we ignore it
+            val tempChannel = connection?.openChannel() ?: return@runCatching
 
             val deadExchange = delivery.message.exchange + "-dead"
             tempChannel.exchangeDeclarePassive(deadExchange) // Checks if exchange exists or throws an AMQPException
@@ -287,8 +302,6 @@ open class MessagingService(
             )
 
             tempChannel.close()
-        } catch (_: AMQPException) {
-            // Exchange does not exist, we ignore it
         }
 
         // Discard the message. Override this method to handle failed messages.
