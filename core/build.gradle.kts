@@ -5,8 +5,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dokka)
     alias(libs.plugins.maven)
-    alias(libs.plugins.npm)
-    alias(libs.plugins.kotlinjsfix)
 }
 
 mavenPublishing {
@@ -75,6 +73,11 @@ kotlin {
         nodejs()
         browser()
     }
+    wasmJs {
+        binaries.library()
+        nodejs()
+        browser()
+    }
 
     applyDefaultHierarchyTemplate()
     sourceSets {
@@ -102,11 +105,18 @@ kotlin {
                 implementation(libs.tests.mockk)
             }
         }
-        val jsMain by getting {
+        val jsAndWasmJsMain by creating {
+            dependsOn(commonMain)
             dependencies {
                 api(libs.kotlin.js)
                 api(npm("uuid", "11.1.0"))
             }
+        }
+        val jsMain by getting {
+            dependsOn(jsAndWasmJsMain)
+        }
+        val wasmJsMain by getting {
+            dependsOn(jsAndWasmJsMain)
         }
         val desktopMain by creating {
             dependsOn(nativeMain)
@@ -116,21 +126,6 @@ kotlin {
         }
         val linuxMain by getting {
             dependsOn(desktopMain)
-        }
-    }
-}
-
-kotlinjsfix {
-    flattenCjsExports = true
-    exportJsInterfaces = true
-    removeDoNotUseOrImplementIt = true
-}
-
-npmPublish {
-    readme.set(file("README.md"))
-    registries {
-        register("npmjs") {
-            uri.set("https://registry.npmjs.org")
         }
     }
 }

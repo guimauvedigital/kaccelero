@@ -2,10 +2,8 @@ package dev.kaccelero.commons.repositories
 
 import dev.kaccelero.models.IContext
 import dev.kaccelero.models.IModel
-import kotlin.js.JsExport
 import kotlin.js.JsName
 
-@JsExport
 interface IDeleteModelWithContextUseCase<Model : IModel<Id, *, *>, Id> :
     IDeleteChildModelWithContextUseCase<Model, Id, Unit> {
 

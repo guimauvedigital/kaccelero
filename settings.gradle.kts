@@ -22,9 +22,7 @@ dependencyResolutionManagement {
             plugin("ksp", "com.google.devtools.ksp").version("2.1.21-2.0.2")
             plugin("dokka", "org.jetbrains.dokka").version("2.0.0")
             plugin("maven", "com.vanniktech.maven.publish").version("0.30.0")
-            plugin("npm", "dev.petuska.npm.publish").version("3.4.1")
             plugin("android-library", "com.android.library").versionRef("agp")
-            plugin("kotlinjsfix", "me.nathanfallet.kotlinjsfix").version("1.0.1")
 
             // Kotlinx
             library("kotlinx-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")

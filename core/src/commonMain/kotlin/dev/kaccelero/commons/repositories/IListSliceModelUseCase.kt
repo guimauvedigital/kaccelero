@@ -2,10 +2,8 @@ package dev.kaccelero.commons.repositories
 
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.Pagination
-import kotlin.js.JsExport
 import kotlin.js.JsName
 
-@JsExport
 interface IListSliceModelUseCase<Model : IModel<*, *, *>> : IListSliceChildModelUseCase<Model, Unit> {
 
     @JsName("invokeDefault")

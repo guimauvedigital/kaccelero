@@ -3,10 +3,8 @@ package dev.kaccelero.commons.repositories
 import dev.kaccelero.models.IContext
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.Pagination
-import kotlin.js.JsExport
 import kotlin.js.JsName
 
-@JsExport
 interface IListSliceModelWithContextUseCase<Model : IModel<*, *, *>> :
     IListSliceChildModelWithContextUseCase<Model, Unit> {
 

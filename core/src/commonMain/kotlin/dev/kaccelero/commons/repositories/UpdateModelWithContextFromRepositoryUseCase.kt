@@ -3,9 +3,7 @@ package dev.kaccelero.commons.repositories
 import dev.kaccelero.models.IContext
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.IModelRepository
-import kotlin.js.JsExport
 
-@JsExport
 open class UpdateModelWithContextFromRepositoryUseCase<Model : IModel<Id, *, UpdatePayload>, Id, UpdatePayload>(
     repository: IModelRepository<Model, Id, *, UpdatePayload>,
 ) : UpdateChildModelWithContextFromRepositoryUseCase<Model, Id, UpdatePayload, Unit>(repository),

@@ -3,9 +3,7 @@ package dev.kaccelero.commons.repositories
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.IModelRepository
 import dev.kaccelero.repositories.Pagination
-import kotlin.js.JsExport
 
-@JsExport
 open class ListSliceModelFromRepositoryUseCase<Model : IModel<*, *, *>>(
     repository: IModelRepository<Model, *, *, *>,
 ) : ListSliceChildModelFromRepositoryUseCase<Model, Unit>(repository), IListSliceModelUseCase<Model> {

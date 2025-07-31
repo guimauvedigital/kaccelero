@@ -2,9 +2,7 @@ package dev.kaccelero.commons.repositories
 
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.IModelRepository
-import kotlin.js.JsExport
 
-@JsExport
 open class UpdateModelFromRepositoryUseCase<Model : IModel<Id, *, UpdatePayload>, Id, UpdatePayload>(
     repository: IModelRepository<Model, Id, *, UpdatePayload>,
 ) : UpdateChildModelFromRepositoryUseCase<Model, Id, UpdatePayload, Unit>(repository),

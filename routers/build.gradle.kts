@@ -5,8 +5,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dokka)
     alias(libs.plugins.maven)
-    alias(libs.plugins.npm)
-    alias(libs.plugins.kotlinjsfix)
 }
 
 mavenPublishing {
@@ -75,6 +73,11 @@ kotlin {
         nodejs()
         browser()
     }
+    wasmJs {
+        binaries.library()
+        nodejs()
+        browser()
+    }
 
     applyDefaultHierarchyTemplate()
     sourceSets {
@@ -92,28 +95,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.tests.mockk)
-            }
-        }
-    }
-}
-
-kotlinjsfix {
-    flattenCjsExports = true
-    exportJsInterfaces = true
-    removeDoNotUseOrImplementIt = true
-}
-
-npmPublish {
-    readme.set(file("README.md"))
-    registries {
-        register("npmjs") {
-            uri.set("https://registry.npmjs.org")
-        }
-    }
-    packages {
-        named("js") {
-            dependencies {
-                normal("@kaccelero/controllers", project.version.toString())
             }
         }
     }

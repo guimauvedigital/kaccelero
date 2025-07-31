@@ -4,9 +4,7 @@ import dev.kaccelero.models.IContext
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.IModelRepository
 import dev.kaccelero.repositories.Pagination
-import kotlin.js.JsExport
 
-@JsExport
 open class ListSliceModelWithContextFromRepositoryUseCase<Model : IModel<*, *, *>>(
     repository: IModelRepository<Model, *, *, *>,
 ) : ListSliceChildModelWithContextFromRepositoryUseCase<Model, Unit>(repository),

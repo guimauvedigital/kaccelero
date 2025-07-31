@@ -2,10 +2,8 @@ package dev.kaccelero.repositories
 
 import dev.kaccelero.models.IContext
 import dev.kaccelero.models.IModel
-import kotlin.js.JsExport
 import kotlin.js.JsName
 
-@JsExport
 interface IModelRepository<Model : IModel<Id, CreatePayload, UpdatePayload>, Id, CreatePayload, UpdatePayload> :
     IChildModelRepository<Model, Id, CreatePayload, UpdatePayload, Unit> {
 

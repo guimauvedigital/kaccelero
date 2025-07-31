@@ -2,9 +2,7 @@ package dev.kaccelero.commons.repositories
 
 import dev.kaccelero.models.IChildModel
 import dev.kaccelero.repositories.IChildModelRepository
-import kotlin.js.JsExport
 
-@JsExport
 open class UpdateChildModelFromRepositoryUseCase<Model : IChildModel<Id, *, UpdatePayload, ParentId>, Id, UpdatePayload, ParentId>(
     private val repository: IChildModelRepository<Model, Id, *, UpdatePayload, ParentId>,
 ) : IUpdateChildModelUseCase<Model, Id, UpdatePayload, ParentId> {

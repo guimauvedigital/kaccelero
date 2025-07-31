@@ -3,9 +3,7 @@ package dev.kaccelero.commons.repositories
 import dev.kaccelero.models.IChildModel
 import dev.kaccelero.models.IContext
 import dev.kaccelero.repositories.IChildModelRepository
-import kotlin.js.JsExport
 
-@JsExport
 open class GetChildModelWithContextFromRepositoryUseCase<Model : IChildModel<Id, *, *, ParentId>, Id, ParentId>(
     private val repository: IChildModelRepository<Model, Id, *, *, ParentId>,
 ) : IGetChildModelWithContextUseCase<Model, Id, ParentId> {

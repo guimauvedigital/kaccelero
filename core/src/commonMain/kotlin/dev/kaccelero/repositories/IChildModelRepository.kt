@@ -2,10 +2,8 @@ package dev.kaccelero.repositories
 
 import dev.kaccelero.models.IChildModel
 import dev.kaccelero.models.IContext
-import kotlin.js.JsExport
 import kotlin.js.JsName
 
-@JsExport
 interface IChildModelRepository<Model : IChildModel<Id, CreatePayload, UpdatePayload, ParentId>, Id, CreatePayload, UpdatePayload, ParentId> {
 
     fun list(parentId: ParentId, context: IContext? = null): List<Model> = throw UnsupportedOperationException()

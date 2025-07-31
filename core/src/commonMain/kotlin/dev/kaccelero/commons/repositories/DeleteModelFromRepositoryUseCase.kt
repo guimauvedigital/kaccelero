@@ -2,9 +2,7 @@ package dev.kaccelero.commons.repositories
 
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.IModelRepository
-import kotlin.js.JsExport
 
-@JsExport
 open class DeleteModelFromRepositoryUseCase<Model : IModel<Id, *, *>, Id>(
     repository: IModelRepository<Model, Id, *, *>,
 ) : DeleteChildModelFromRepositoryUseCase<Model, Id, Unit>(repository), IDeleteModelUseCase<Model, Id> {

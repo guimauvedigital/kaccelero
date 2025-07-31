@@ -1,10 +1,8 @@
 package dev.kaccelero.commons.repositories
 
 import dev.kaccelero.models.IModel
-import kotlin.js.JsExport
 import kotlin.js.JsName
 
-@JsExport
 interface ICreateModelUseCase<Model : IModel<*, CreatePayload, *>, CreatePayload> :
     ICreateChildModelUseCase<Model, CreatePayload, Unit> {
 

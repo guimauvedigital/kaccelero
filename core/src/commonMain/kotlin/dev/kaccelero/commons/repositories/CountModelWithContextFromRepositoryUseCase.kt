@@ -3,9 +3,7 @@ package dev.kaccelero.commons.repositories
 import dev.kaccelero.models.IContext
 import dev.kaccelero.models.IModel
 import dev.kaccelero.repositories.IModelRepository
-import kotlin.js.JsExport
 
-@JsExport
 open class CountModelWithContextFromRepositoryUseCase<Model : IModel<*, *, *>>(
     repository: IModelRepository<Model, *, *, *>,
 ) : CountChildModelWithContextFromRepositoryUseCase<Model, Unit>(repository), ICountModelWithContextUseCase<Model> {
