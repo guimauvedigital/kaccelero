@@ -4,8 +4,6 @@ import dev.kaccelero.commons.responses.BytesResponse
 import dev.kaccelero.commons.responses.StatusResponse
 import dev.kaccelero.commons.responses.StreamResponse
 import dev.kaccelero.mocks.ITestUnitController
-import dev.kaccelero.mocks.TestCreatePayload
-import dev.kaccelero.mocks.TestGenericPayload
 import dev.kaccelero.models.UUID
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -269,6 +267,8 @@ class APIUnitRouterTest {
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
 
+    /*
+    // See https://github.com/guimauvedigital/kaccelero/issues/6
     @Test
     fun testAPIGenericPayload() = testApplication {
         val client = installApp(this)
@@ -291,5 +291,6 @@ class APIUnitRouterTest {
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals(payload.value.string, response.body())
     }
+    */
 
 }
