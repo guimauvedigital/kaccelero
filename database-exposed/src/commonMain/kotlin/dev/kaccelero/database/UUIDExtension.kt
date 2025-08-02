@@ -4,6 +4,8 @@ import dev.kaccelero.models.UUID
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.wrap
 import org.jetbrains.exposed.sql.ops.InListOrNotInListBaseOp
 import org.jetbrains.exposed.sql.ops.SingleValueInListOp
@@ -25,8 +27,10 @@ infix fun ExpressionWithColumnType<EntityID<java.util.UUID>>.eq(t: UUID): Op<Boo
     EqOp(this, wrap(EntityID(t.javaUUID, columnType.table)))
 
 @JvmName("eqNullableID")
-infix fun ExpressionWithColumnType<java.util.UUID?>.eq(t: UUID?): Op<Boolean> =
-    EqOp(this, wrap(t?.javaUUID))
+infix fun ExpressionWithColumnType<java.util.UUID?>.eq(t: UUID?): Op<Boolean> = when (t) {
+    null -> isNull()
+    else -> EqOp(this, wrap(t.javaUUID))
+}
 
 // MARK: - neq
 
@@ -38,8 +42,10 @@ infix fun ExpressionWithColumnType<EntityID<java.util.UUID>>.neq(t: UUID): Op<Bo
     NeqOp(this, wrap(EntityID(t.javaUUID, columnType.table)))
 
 @JvmName("neqNullableID")
-infix fun ExpressionWithColumnType<java.util.UUID?>.neq(t: UUID?): Op<Boolean> =
-    NeqOp(this, wrap(t?.javaUUID))
+infix fun ExpressionWithColumnType<java.util.UUID?>.neq(t: UUID?): Op<Boolean> = when (t) {
+    null -> isNotNull()
+    else -> NeqOp(this, wrap(t.javaUUID))
+}
 
 // MARK: - inList
 
