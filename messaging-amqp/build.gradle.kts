@@ -56,7 +56,7 @@ kotlin {
 
     // Tier 3
     mingwX64()
-    //watchosDeviceArm64()
+    watchosDeviceArm64()
 
     // jvm & js
     jvmToolchain(21)
