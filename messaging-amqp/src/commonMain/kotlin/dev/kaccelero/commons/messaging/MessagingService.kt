@@ -7,11 +7,9 @@ import dev.kourier.amqp.Field
 import dev.kourier.amqp.Properties
 import dev.kourier.amqp.channel.AMQPChannel
 import dev.kourier.amqp.connection.AMQPConnection
-import dev.kourier.amqp.connection.createAMQPConnection
+import dev.kourier.amqp.robust.createRobustAMQPConnection
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 
@@ -37,15 +35,15 @@ open class MessagingService(
     open var connection: AMQPConnection? = null
     open var channel: AMQPChannel? = null
 
-    protected val isConnectingMutex = Mutex()
-    protected var isConnecting = false
-
     init {
-        coroutineScope.launch { reconnect() }
+        coroutineScope.launch {
+            connect()
+            if (listen) listen()
+        }
     }
 
     open suspend fun connect() {
-        connection = createAMQPConnection(coroutineScope) {
+        connection = createRobustAMQPConnection(coroutineScope) {
             server {
                 host = this@MessagingService.host
                 user = this@MessagingService.user
@@ -55,10 +53,6 @@ open class MessagingService(
         }
 
         channel = connection?.openChannel()
-        coroutineScope.launch {
-            val cause = connection?.connectionClosed?.await() ?: return@launch
-            if (!cause.isInitiatedByApplication) reconnect()
-        }
         channel?.basicQos(1u)
 
         setup()
@@ -69,29 +63,6 @@ open class MessagingService(
         queueDeclare(sharedQueue, exchange)
         keys.filter { !it.isMultiple }.forEach { routingKey ->
             queueBind(sharedQueue, exchange, routingKey.key)
-        }
-    }
-
-    open suspend fun reconnect() {
-        isConnectingMutex.withLock {
-            if (isConnecting) return
-            isConnecting = true
-        }
-        runCatching {
-            if (channel?.channelClosed?.isCompleted == false) channel?.close()
-            if (connection?.connectionClosed?.isCompleted == false) connection?.close()
-            channel = null
-            connection = null
-        }
-        try {
-            connect()
-            isConnectingMutex.withLock { isConnecting = false }
-            if (listen) coroutineScope.launch { listen() }
-        } catch (_: Exception) {
-            coroutineScope.launch {
-                delay(5000) // Try again after 5 seconds
-                reconnect()
-            }
         }
     }
 
@@ -258,9 +229,6 @@ open class MessagingService(
                     } catch (exception: Exception) {
                         handleException(delivery, exception)
                     }
-                },
-                onCanceled = {
-                    reconnect()
                 }
             )
         }
