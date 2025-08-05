@@ -4,33 +4,34 @@ import dev.kaccelero.serializers.Serialization
 import dev.kourier.amqp.AMQPResponse
 import dev.kourier.amqp.BuiltinExchangeType
 import dev.kourier.amqp.Field
-import dev.kourier.amqp.Properties
 import dev.kourier.amqp.channel.AMQPChannel
 import dev.kourier.amqp.connection.AMQPConnection
+import dev.kourier.amqp.properties
 import dev.kourier.amqp.robust.createRobustAMQPConnection
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 
 open class MessagingService(
-    open val exchange: String,
     open val host: String,
     open val user: String,
     open val password: String,
-    open val handleMessagingUseCase: IHandleMessagingUseCase,
+    open val exchange: IMessagingExchange,
+    open val queue: IMessagingQueue,
     open val keys: List<IMessagingKey>,
+    open val handleMessagingUseCaseFactory: () -> IHandleMessagingUseCase,
+    open val coroutineScope: CoroutineScope,
     open val json: Json? = null,
     open val listen: Boolean = true,
     open val persistent: Boolean = false,
     open val quorum: Boolean = false,
     open val dead: Boolean = false,
     open val maxXDeathCount: Int = 1,
-    open val connectionName: String = exchange,
-    open val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    open val connectionName: String = queue.queue,
 ) : IMessagingService {
-
-    open val sharedQueue = exchange
 
     open var connection: AMQPConnection? = null
     open var channel: AMQPChannel? = null
@@ -60,86 +61,85 @@ open class MessagingService(
 
     open suspend fun setup() {
         exchangeDeclare(exchange)
-        queueDeclare(sharedQueue, exchange)
+        queueDeclare(queue, exchange)
         keys.filter { !it.isMultiple }.forEach { routingKey ->
-            queueBind(sharedQueue, exchange, routingKey.key)
+            queueBind(queue, exchange, routingKey.key)
         }
     }
 
     open suspend fun exchangeDeclare(
-        name: String,
+        exchange: IMessagingExchange,
         type: String = BuiltinExchangeType.DIRECT,
         arguments: Map<String, Field> = mapOf(),
     ) {
         channel?.exchangeDeclare(
-            name = name,
+            name = exchange.exchange,
             type = type,
             durable = true,
-            autoDelete = false,
             arguments = arguments
         )
-        exchangeDeclareAdditionalResources(name, type, arguments)
+        exchangeDeclareAdditionalResources(exchange, type, arguments)
     }
 
     protected open suspend fun exchangeDeclareAdditionalResources(
-        name: String,
+        exchange: IMessagingExchange,
         type: String,
         arguments: Map<String, Field>,
     ) {
-        if (maxXDeathCount > 1) channel?.exchangeDeclare(
-            name = "$name-dlx",
-            type = type,
-            durable = true,
-            autoDelete = false
-        )
-        if (dead) {
+        if (maxXDeathCount > 1) {
             channel?.exchangeDeclare(
-                name = "$name-dead",
+                name = "${exchange.exchange}-dlx",
                 type = BuiltinExchangeType.FANOUT,
                 durable = true,
-                autoDelete = false
             )
             channel?.queueDeclare(
-                name = "$name-dead",
+                name = "${exchange.exchange}-dlx",
                 durable = true,
-                exclusive = false,
-                autoDelete = false,
+                arguments = mapOf(
+                    "x-dead-letter-exchange" to Field.LongString(exchange.exchange),
+                    "x-message-ttl" to Field.Int(5000),
+                )
+            )
+            if (maxXDeathCount > 1) channel?.queueBind(
+                queue = "${exchange.exchange}-dlx",
+                exchange = "${exchange.exchange}-dlx",
+                routingKey = "#"
+            )
+        }
+        if (dead) {
+            channel?.exchangeDeclare(
+                name = "${exchange.exchange}-dead",
+                type = BuiltinExchangeType.FANOUT,
+                durable = true,
+            )
+            channel?.queueDeclare(
+                name = "${exchange.exchange}-dead",
+                durable = true,
             )
             channel?.queueBind(
-                queue = "$name-dead",
-                exchange = "$name-dead",
+                queue = "${exchange.exchange}-dead",
+                exchange = "${exchange.exchange}-dead",
                 routingKey = "#"
             )
         }
     }
 
     open suspend fun queueDeclare(
-        name: String,
-        exchange: String? = null,
+        queue: IMessagingQueue,
+        exchange: IMessagingExchange? = null,
         durable: Boolean = true,
         exclusive: Boolean = false,
         autoDelete: Boolean = false,
         arguments: Map<String, Field> = mapOf(),
     ) {
         val dlxArguments =
-            if (maxXDeathCount > 1) {
-                channel?.queueDeclare(
-                    name = "$name-dlx",
-                    durable = durable,
-                    exclusive = exclusive,
-                    autoDelete = autoDelete,
-                    arguments = mapOf(
-                        "x-dead-letter-exchange" to Field.LongString(exchange ?: this.exchange),
-                        "x-message-ttl" to Field.Int(5000),
-                    )
-                )
-                mapOf("x-dead-letter-exchange" to Field.LongString("${exchange ?: this.exchange}-dlx"))
-            } else emptyMap()
+            if (maxXDeathCount > 1) mapOf("x-dead-letter-exchange" to Field.LongString("${(exchange ?: this.exchange).exchange}-dlx"))
+            else emptyMap()
         val quorumArguments =
             if (quorum && durable && !exclusive) mapOf("x-queue-type" to Field.LongString("quorum"))
             else emptyMap()
         channel?.queueDeclare(
-            name = name,
+            name = queue.queue,
             durable = durable,
             exclusive = exclusive,
             autoDelete = autoDelete,
@@ -148,20 +148,14 @@ open class MessagingService(
     }
 
     open suspend fun queueBind(
-        queue: String,
-        exchange: String,
+        queue: IMessagingQueue,
+        exchange: IMessagingExchange,
         routingKey: String,
         arguments: Map<String, Field> = mapOf(),
     ) {
         channel?.queueBind(
-            queue = queue,
-            exchange = exchange,
-            routingKey = routingKey,
-            arguments = arguments
-        )
-        if (maxXDeathCount > 1) channel?.queueBind(
-            queue = "$queue-dlx",
-            exchange = "$exchange-dlx",
+            queue = queue.queue,
+            exchange = exchange.exchange,
             routingKey = routingKey,
             arguments = arguments
         )
@@ -172,6 +166,7 @@ open class MessagingService(
             ?: throw IllegalArgumentException("Invalid routing key: $key")
     }
 
+    // This might not be required anymore? (with robust connection)
     open suspend fun tryWithAttempts(
         attempts: Int = 3,
         delay: Long = 5000,
@@ -192,6 +187,7 @@ open class MessagingService(
     suspend inline fun <reified T> publish(
         routingKey: IMessagingKey,
         value: T,
+        exchange: IMessagingExchange? = null,
         persistent: Boolean = false,
         attempts: Int = 3,
         delay: Long = 5000,
@@ -199,32 +195,29 @@ open class MessagingService(
         tryWithAttempts(attempts, delay) {
             channel!!.basicPublish(
                 body = (json ?: Serialization.json).encodeToString(value).toByteArray(),
-                exchange = exchange,
+                exchange = (exchange ?: this.exchange).exchange,
                 routingKey = routingKey.key,
-                properties = Properties(
-                    deliveryMode = if (persistent || this.persistent) 2u else 1u
-                ),
+                properties = properties {
+                    deliveryMode = if (persistent || this@MessagingService.persistent) 2u else 1u
+                },
             )
         }
     }
 
     override suspend fun listen() {
+        val handleMessagingUseCase = handleMessagingUseCaseFactory()
         val exclusiveQueue = channel?.queueDeclare()?.queueName ?: return
         keys.filter { it.isMultiple }.forEach { routingKey ->
-            channel?.queueBind(exclusiveQueue, exchange, routingKey.key)
+            channel?.queueBind(exclusiveQueue, exchange.exchange, routingKey.key)
         }
-        listOf(sharedQueue, exclusiveQueue).forEach { queue ->
+        listOf(queue.queue, exclusiveQueue).forEach { queue ->
             channel?.basicConsume(
                 queue,
                 noAck = false,
                 onDelivery = { delivery ->
                     try {
                         val routingKey = routingKey(delivery.message.routingKey)
-                        handleMessagingUseCase(
-                            this@MessagingService,
-                            routingKey,
-                            delivery.message.body.decodeToString()
-                        )
+                        handleMessagingUseCase(routingKey, delivery.message.body.decodeToString())
                         channel?.basicAck(delivery.message.deliveryTag, false)
                     } catch (exception: Exception) {
                         handleException(delivery, exception)
