@@ -1,5 +1,5 @@
 package dev.kaccelero.commons.messaging
 
-import dev.kaccelero.usecases.ITripleSuspendUseCase
+import dev.kaccelero.usecases.IPairSuspendUseCase
 
-interface IHandleMessagingUseCase : ITripleSuspendUseCase<IMessagingService, IMessagingKey, String, Unit>
+interface IHandleMessagingUseCase : IPairSuspendUseCase<IMessagingKey, String, Unit>
