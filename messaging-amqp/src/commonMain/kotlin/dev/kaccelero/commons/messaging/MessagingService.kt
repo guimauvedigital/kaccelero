@@ -63,7 +63,7 @@ open class MessagingService(
         exchangeDeclare(exchange)
         queueDeclare(queue, exchange)
         keys.filter { !it.isMultiple }.forEach { routingKey ->
-            queueBind(queue, exchange, routingKey.key)
+            queueBind(queue, exchange, routingKey)
         }
     }
 
@@ -150,13 +150,13 @@ open class MessagingService(
     open suspend fun queueBind(
         queue: IMessagingQueue,
         exchange: IMessagingExchange,
-        routingKey: String,
+        routingKey: IMessagingKey,
         arguments: Map<String, Field> = mapOf(),
     ) {
         channel?.queueBind(
             queue = queue.queue,
             exchange = exchange.exchange,
-            routingKey = routingKey,
+            routingKey = routingKey.key,
             arguments = arguments
         )
     }
