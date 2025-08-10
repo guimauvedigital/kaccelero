@@ -25,7 +25,8 @@ open class MessagingService(
     open val handleMessagingUseCaseFactory: () -> IHandleMessagingUseCase,
     open val coroutineScope: CoroutineScope,
     open val json: Json? = null,
-    open val listen: Boolean = true,
+    open val autoConnect: Boolean = true,
+    open val autoListen: Boolean = true,
     open val persistent: Boolean = false,
     open val quorum: Boolean = false,
     open val dead: Boolean = false,
@@ -33,17 +34,17 @@ open class MessagingService(
     open val connectionName: String = queue.queue,
 ) : IMessagingService {
 
-    open var connection: AMQPConnection? = null
-    open var channel: AMQPChannel? = null
+    override var connection: AMQPConnection? = null
+    override var channel: AMQPChannel? = null
 
     init {
         coroutineScope.launch {
-            connect()
-            if (listen) listen()
+            if (autoConnect) connect()
+            if (autoConnect && autoListen) listen()
         }
     }
 
-    open suspend fun connect() {
+    override suspend fun connect() {
         connection = createRobustAMQPConnection(coroutineScope) {
             server {
                 host = this@MessagingService.host
@@ -59,7 +60,7 @@ open class MessagingService(
         setup()
     }
 
-    open suspend fun setup() {
+    override suspend fun setup() {
         exchangeDeclare(exchange)
         queueDeclare(queue, exchange)
         keys.filter { !it.isMultiple }.forEach { routingKey ->
@@ -67,10 +68,10 @@ open class MessagingService(
         }
     }
 
-    open suspend fun exchangeDeclare(
+    override suspend fun exchangeDeclare(
         exchange: IMessagingExchange,
-        type: String = BuiltinExchangeType.DIRECT,
-        arguments: Map<String, Field> = mapOf(),
+        type: String,
+        arguments: Map<String, Field>,
     ) {
         channel?.exchangeDeclare(
             name = exchange.exchange,
@@ -124,13 +125,13 @@ open class MessagingService(
         }
     }
 
-    open suspend fun queueDeclare(
+    override suspend fun queueDeclare(
         queue: IMessagingQueue,
-        exchange: IMessagingExchange? = null,
-        durable: Boolean = true,
-        exclusive: Boolean = false,
-        autoDelete: Boolean = false,
-        arguments: Map<String, Field> = mapOf(),
+        exchange: IMessagingExchange?,
+        durable: Boolean,
+        exclusive: Boolean,
+        autoDelete: Boolean,
+        arguments: Map<String, Field>,
     ) {
         val dlxArguments =
             if (maxXDeathCount > 1) mapOf("x-dead-letter-exchange" to Field.LongString("${(exchange ?: this.exchange).exchange}-dlx"))
@@ -147,11 +148,11 @@ open class MessagingService(
         )
     }
 
-    open suspend fun queueBind(
+    override suspend fun queueBind(
         queue: IMessagingQueue,
         exchange: IMessagingExchange,
         routingKey: IMessagingKey,
-        arguments: Map<String, Field> = mapOf(),
+        arguments: Map<String, Field>,
     ) {
         channel?.queueBind(
             queue = queue.queue,
