@@ -5,9 +5,11 @@ import dev.kourier.amqp.Field
 import dev.kourier.amqp.properties
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A messaging service that supports delayed message delivery using the x-delayed-message exchange type.
@@ -51,6 +53,7 @@ open class DelayedMessagingService(
 ) {
 
     override suspend fun exchangeDeclare(exchange: IMessagingExchange, type: String, arguments: Map<String, Field>) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
         val channel = this.channel ?: error("Channel is not initialized")
         channel.exchangeDeclare(
             name = exchange.exchange,
@@ -70,6 +73,7 @@ open class DelayedMessagingService(
         attempts: Int = 3,
         delay: Long = 5000,
     ) {
+        withTimeoutOrNull(60.seconds) { setupCompleted.await() }
         tryWithAttempts(attempts, delay) {
             val channel = this.channel ?: error("Channel is not initialized")
             val delay = publishAt?.minus(Clock.System.now())?.inWholeMilliseconds ?: 0
