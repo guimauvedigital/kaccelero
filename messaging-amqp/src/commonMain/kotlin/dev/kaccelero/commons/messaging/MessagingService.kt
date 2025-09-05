@@ -195,7 +195,7 @@ open class MessagingService(
         attempts: Int = 3,
         delay: Long = 5000,
     ) {
-        withTimeoutOrNull(60.seconds) { channelReady.await() }
+        withTimeoutOrNull(60.seconds) { setupCompleted.await() }
         tryWithAttempts(attempts, delay) {
             val channel = this.channel ?: error("Channel is not initialized")
             channel.basicPublish(

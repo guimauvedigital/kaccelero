@@ -1,10 +1,14 @@
 package dev.kaccelero.commons.messaging
 
+import dev.kaccelero.serializers.Serialization
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.test.*
+import kotlin.time.Duration.Companion.seconds
 
 class MessagingServiceTest {
 
@@ -147,6 +151,53 @@ class MessagingServiceTest {
         integrationService.channel!!.queueDelete(integrationQueue.queue)
         integrationService.channel!!.queueDelete(integrationExchange.exchange + "-dlx")
         integrationService.channel!!.queueDelete(integrationExchange.exchange + "-dead")
+
+        Unit // avoid returning the last expression (would make the test not trigger)
+    }
+
+    @Test
+    fun integrationTestPublishAndListen() = runBlocking {
+        val integrationExchange = object : IMessagingExchange {
+            override val exchange = "integration-test-exchange-pubsub"
+        }
+        val integrationQueue = object : IMessagingQueue {
+            override val queue = "integration-test-queue-pubsub"
+        }
+        val integrationKey = object : IMessagingKey {
+            override val key = "integration-test-key-pubsub"
+            override val isMultiple = false
+        }
+        val received = CompletableDeferred<TestMessage>()
+        val testValue = TestMessage("hello-world-${System.currentTimeMillis()}")
+        val integrationService = MessagingService(
+            host = "localhost",
+            user = "guest",
+            password = "guest",
+            exchange = integrationExchange,
+            queue = integrationQueue,
+            keys = listOf(integrationKey),
+            handleMessagingUseCaseFactory = {
+                object : IHandleMessagingUseCase {
+                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                        if (input1.key == integrationKey.key) received.complete(
+                            Serialization.json.decodeFromString(input2)
+                        )
+                    }
+                }
+            },
+            coroutineScope = this,
+            autoConnect = true,
+            autoListen = true,
+        )
+
+        // Publish and ensure we receive the message
+        integrationService.publish(integrationKey, testValue)
+        val result = withTimeoutOrNull(5.seconds) { received.await() }
+        assertEquals(testValue, result)
+
+        // Cleanup
+        integrationService.channel!!.exchangeDelete(integrationExchange.exchange)
+        integrationService.channel!!.queueDelete(integrationQueue.queue)
 
         Unit // avoid returning the last expression (would make the test not trigger)
     }
