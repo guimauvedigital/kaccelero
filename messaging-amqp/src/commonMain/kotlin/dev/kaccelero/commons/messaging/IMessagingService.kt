@@ -4,6 +4,7 @@ import dev.kourier.amqp.BuiltinExchangeType
 import dev.kourier.amqp.Field
 import dev.kourier.amqp.channel.AMQPChannel
 import dev.kourier.amqp.connection.AMQPConnection
+import kotlinx.coroutines.Deferred
 
 /**
  * Interface defining the contract for a messaging service.
@@ -19,6 +20,16 @@ interface IMessagingService {
      * The raw AMQP channel instance.
      */
     val channel: AMQPChannel?
+
+    /**
+     * A Deferred that completes when the connection and channels are ready.
+     */
+    val channelReady: Deferred<Unit>
+
+    /**
+     * A Deferred that completes when the setup process is finished.
+     */
+    val setupCompleted: Deferred<Unit>
 
     /**
      * Connects to the messaging server.

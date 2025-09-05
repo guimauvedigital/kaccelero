@@ -9,10 +9,13 @@ import dev.kourier.amqp.connection.AMQPConnection
 import dev.kourier.amqp.properties
 import dev.kourier.amqp.robust.createRobustAMQPConnection
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A robust messaging service that handles connection, setup, publishing, and listening for messages.
@@ -40,6 +43,9 @@ open class MessagingService(
     override var connection: AMQPConnection? = null
     override var channel: AMQPChannel? = null
 
+    override val channelReady = CompletableDeferred<Unit>()
+    override val setupCompleted = CompletableDeferred<Unit>()
+
     init {
         coroutineScope.launch {
             if (autoConnect) connect()
@@ -60,10 +66,11 @@ open class MessagingService(
 
         val channel = connection.openChannel()
         this.channel = channel
-
         channel.basicQos(prefetchCount)
+        channelReady.complete(Unit)
 
         setup()
+        setupCompleted.complete(Unit)
     }
 
     override suspend fun setup() {
@@ -79,6 +86,7 @@ open class MessagingService(
         type: String,
         arguments: Map<String, Field>,
     ) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
         val channel = this.channel ?: error("Channel is not initialized")
         channel.exchangeDeclare(
             name = exchange.exchange,
@@ -94,6 +102,7 @@ open class MessagingService(
         type: String,
         arguments: Map<String, Field>,
     ) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
         val channel = this.channel ?: error("Channel is not initialized")
         if (maxXDeathCount > 1) {
             channel.exchangeDeclare(
@@ -141,6 +150,7 @@ open class MessagingService(
         autoDelete: Boolean,
         arguments: Map<String, Field>,
     ) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
         val channel = this.channel ?: error("Channel is not initialized")
         val dlxArguments =
             if (maxXDeathCount > 1) mapOf("x-dead-letter-exchange" to Field.LongString("${(exchange ?: this.exchange).exchange}-dlx"))
@@ -163,6 +173,7 @@ open class MessagingService(
         routingKey: IMessagingKey,
         arguments: Map<String, Field>,
     ) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
         val channel = this.channel ?: error("Channel is not initialized")
         channel.queueBind(
             queue = queue.queue,
@@ -173,8 +184,7 @@ open class MessagingService(
     }
 
     open fun routingKey(key: String): IMessagingKey {
-        return keys.find { it.key == key }
-            ?: throw IllegalArgumentException("Invalid routing key: $key")
+        return keys.find { it.key == key } ?: error("Invalid routing key: $key")
     }
 
     suspend inline fun <reified T> publish(
@@ -185,6 +195,7 @@ open class MessagingService(
         attempts: Int = 3,
         delay: Long = 5000,
     ) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
         tryWithAttempts(attempts, delay) {
             val channel = this.channel ?: error("Channel is not initialized")
             channel.basicPublish(
@@ -199,6 +210,7 @@ open class MessagingService(
     }
 
     override suspend fun listen() {
+        withTimeoutOrNull(60.seconds) { setupCompleted.await() }
         val channel = this.channel ?: error("Channel is not initialized")
         val handleMessagingUseCase = handleMessagingUseCaseFactory()
 

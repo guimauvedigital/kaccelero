@@ -35,6 +35,7 @@ dependencyResolutionManagement {
             // Tests
             library("tests-mockk", "io.mockk:mockk:1.14.4")
             library("tests-h2", "com.h2database:h2:2.3.232")
+            library("tests-coroutines", "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 
             // Exposed
             version("exposed", "0.61.0")
