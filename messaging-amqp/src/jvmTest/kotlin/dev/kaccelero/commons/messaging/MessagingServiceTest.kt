@@ -1,12 +1,9 @@
 package dev.kaccelero.commons.messaging
 
 import dev.kaccelero.serializers.Serialization
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.test.*
 import kotlin.time.Duration.Companion.seconds
 
@@ -198,6 +195,77 @@ class MessagingServiceTest {
         // Cleanup
         integrationService.channel!!.exchangeDelete(integrationExchange.exchange)
         integrationService.channel!!.queueDelete(integrationQueue.queue)
+
+        Unit // avoid returning the last expression (would make the test not trigger)
+    }
+
+    @Test
+    fun integrationTestRetryAndDeadLetter() = runBlocking {
+        val integrationExchange = object : IMessagingExchange {
+            override val exchange = "integration-test-exchange-dlx"
+        }
+        val integrationQueue = object : IMessagingQueue {
+            override val queue = "integration-test-queue-dlx"
+        }
+        val integrationKey = object : IMessagingKey {
+            override val key = "integration-test-key-dlx"
+            override val isMultiple = false
+        }
+        val testValue = TestMessage("dlx-test-${System.currentTimeMillis()}")
+        val receivedOnDead = CompletableDeferred<TestMessage>()
+        val failCount = 2 // must be >= maxXDeathCount to trigger dead
+        var invocationCount = 0
+        val integrationService = MessagingService(
+            host = "localhost",
+            user = "guest",
+            password = "guest",
+            exchange = integrationExchange,
+            queue = integrationQueue,
+            keys = listOf(integrationKey),
+            handleMessagingUseCaseFactory = {
+                object : IHandleMessagingUseCase {
+                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                        if (input1.key == integrationKey.key) {
+                            invocationCount++
+                            throw RuntimeException("Force DLX/DeadLetter for test")
+                        }
+                    }
+                }
+            },
+            coroutineScope = this,
+            autoConnect = true,
+            autoListen = true,
+            dead = true,
+            maxXDeathCount = failCount,
+        )
+
+        // Publish a message that will fail and go to DLX/dead
+        integrationService.publish(integrationKey, testValue)
+
+        // Listen on the dead-letter queue for the failed message
+        val deadLetterQueue = integrationExchange.exchange + "-dead"
+        val deadJob = launch {
+            integrationService.channel!!.basicConsume(
+                queue = deadLetterQueue,
+                noAck = true,
+                onDelivery = { delivery ->
+                    val msg = Serialization.json.decodeFromString<TestMessage>(delivery.message.body.decodeToString())
+                    if (msg == testValue) receivedOnDead.complete(msg)
+                }
+            )
+        }
+        val result = withTimeoutOrNull(20.seconds) { receivedOnDead.await() }
+        assertEquals(testValue, result, "Message should be dead-lettered after retries")
+        assertTrue(invocationCount >= failCount, "Handler should be invoked at least maxXDeathCount times")
+        deadJob.cancel()
+
+        // Cleanup
+        integrationService.channel!!.exchangeDelete(integrationExchange.exchange)
+        integrationService.channel!!.exchangeDelete(integrationExchange.exchange + "-dlx")
+        integrationService.channel!!.exchangeDelete(integrationExchange.exchange + "-dead")
+        integrationService.channel!!.queueDelete(integrationQueue.queue)
+        integrationService.channel!!.queueDelete(integrationExchange.exchange + "-dlx")
+        integrationService.channel!!.queueDelete(integrationExchange.exchange + "-dead")
 
         Unit // avoid returning the last expression (would make the test not trigger)
     }
