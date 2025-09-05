@@ -9,6 +9,9 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 
+/**
+ * A messaging service that supports delayed message delivery using the x-delayed-message exchange type.
+ */
 open class DelayedMessagingService(
     host: String,
     user: String,
@@ -24,6 +27,7 @@ open class DelayedMessagingService(
     persistent: Boolean = false,
     quorum: Boolean = false,
     dead: Boolean = false,
+    prefetchCount: UShort = 1u,
     maxXDeathCount: Int = 1,
     connectionName: String = queue.queue,
 ) : MessagingService(
@@ -41,12 +45,14 @@ open class DelayedMessagingService(
     persistent,
     quorum,
     dead,
+    prefetchCount,
     maxXDeathCount,
     connectionName,
 ) {
 
     override suspend fun exchangeDeclare(exchange: IMessagingExchange, type: String, arguments: Map<String, Field>) {
-        channel?.exchangeDeclare(
+        val channel = this.channel ?: error("Channel is not initialized")
+        channel.exchangeDeclare(
             name = exchange.exchange,
             type = "x-delayed-message",
             durable = true,
@@ -65,8 +71,9 @@ open class DelayedMessagingService(
         delay: Long = 5000,
     ) {
         tryWithAttempts(attempts, delay) {
+            val channel = this.channel ?: error("Channel is not initialized")
             val delay = publishAt?.minus(Clock.System.now())?.inWholeMilliseconds ?: 0
-            channel!!.basicPublish(
+            channel.basicPublish(
                 body = (json ?: Serialization.json).encodeToString(value).toByteArray(),
                 exchange = (exchange ?: this.exchange).exchange,
                 routingKey = routingKey.key,
