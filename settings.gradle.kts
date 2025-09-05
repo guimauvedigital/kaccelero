@@ -130,7 +130,7 @@ dependencyResolutionManagement {
             // Others
             library("bcrypt", "at.favre.lib:bcrypt:0.10.2")
             library("sentry", "io.sentry:sentry-kotlin-extensions:8.14.0")
-            library("amqp", "dev.kourier:amqp-client-robust:0.2.1")
+            library("amqp", "dev.kourier:amqp-client-robust:0.2.4")
         }
     }
 }

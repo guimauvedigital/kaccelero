@@ -201,11 +201,16 @@ open class MessagingService(
     override suspend fun listen() {
         val channel = this.channel ?: error("Channel is not initialized")
         val handleMessagingUseCase = handleMessagingUseCaseFactory()
-        val exclusiveQueue = channel.queueDeclare().queueName
-        keys.filter { it.isMultiple }.forEach { routingKey ->
-            channel.queueBind(exclusiveQueue, exchange.exchange, routingKey.key)
+
+        val exclusiveQueue = keys.filter { it.isMultiple }.takeIf { it.isNotEmpty() }?.let {
+            val exclusiveQueue = channel.queueDeclare().queueName
+            it.forEach { routingKey ->
+                channel.queueBind(exclusiveQueue, exchange.exchange, routingKey.key)
+            }
+            exclusiveQueue
         }
-        listOf(queue.queue, exclusiveQueue).forEach { queue ->
+
+        listOfNotNull(queue.queue, exclusiveQueue).forEach { queue ->
             channel.basicConsume(
                 queue,
                 noAck = false,
