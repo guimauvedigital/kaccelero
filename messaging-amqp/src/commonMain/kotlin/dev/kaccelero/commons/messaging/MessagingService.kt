@@ -9,12 +9,17 @@ import dev.kourier.amqp.connection.AMQPConnection
 import dev.kourier.amqp.properties
 import dev.kourier.amqp.robust.createRobustAMQPConnection
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.seconds
 
+/**
+ * A robust messaging service that handles connection, setup, publishing, and listening for messages.
+ */
 open class MessagingService(
     open val host: String,
     open val user: String,
@@ -30,12 +35,16 @@ open class MessagingService(
     open val persistent: Boolean = false,
     open val quorum: Boolean = false,
     open val dead: Boolean = false,
+    open val prefetchCount: UShort = 1u,
     open val maxXDeathCount: Int = 1,
     open val connectionName: String = queue.queue,
 ) : IMessagingService {
 
     override var connection: AMQPConnection? = null
     override var channel: AMQPChannel? = null
+
+    override val channelReady = CompletableDeferred<Unit>()
+    override val setupCompleted = CompletableDeferred<Unit>()
 
     init {
         coroutineScope.launch {
@@ -45,7 +54,7 @@ open class MessagingService(
     }
 
     override suspend fun connect() {
-        connection = createRobustAMQPConnection(coroutineScope) {
+        val connection = createRobustAMQPConnection(coroutineScope) {
             server {
                 host = this@MessagingService.host
                 user = this@MessagingService.user
@@ -53,11 +62,15 @@ open class MessagingService(
                 connectionName = this@MessagingService.connectionName
             }
         }
+        this.connection = connection
 
-        channel = connection?.openChannel()
-        channel?.basicQos(1u)
+        val channel = connection.openChannel()
+        this.channel = channel
+        channel.basicQos(prefetchCount)
+        channelReady.complete(Unit)
 
         setup()
+        setupCompleted.complete(Unit)
     }
 
     override suspend fun setup() {
@@ -73,7 +86,9 @@ open class MessagingService(
         type: String,
         arguments: Map<String, Field>,
     ) {
-        channel?.exchangeDeclare(
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
+        val channel = this.channel ?: error("Channel is not initialized")
+        channel.exchangeDeclare(
             name = exchange.exchange,
             type = type,
             durable = true,
@@ -87,13 +102,15 @@ open class MessagingService(
         type: String,
         arguments: Map<String, Field>,
     ) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
+        val channel = this.channel ?: error("Channel is not initialized")
         if (maxXDeathCount > 1) {
-            channel?.exchangeDeclare(
+            channel.exchangeDeclare(
                 name = "${exchange.exchange}-dlx",
                 type = BuiltinExchangeType.FANOUT,
                 durable = true,
             )
-            channel?.queueDeclare(
+            channel.queueDeclare(
                 name = "${exchange.exchange}-dlx",
                 durable = true,
                 arguments = mapOf(
@@ -101,23 +118,23 @@ open class MessagingService(
                     "x-message-ttl" to Field.Int(5000),
                 )
             )
-            if (maxXDeathCount > 1) channel?.queueBind(
+            if (maxXDeathCount > 1) channel.queueBind(
                 queue = "${exchange.exchange}-dlx",
                 exchange = "${exchange.exchange}-dlx",
                 routingKey = "#"
             )
         }
         if (dead) {
-            channel?.exchangeDeclare(
+            channel.exchangeDeclare(
                 name = "${exchange.exchange}-dead",
                 type = BuiltinExchangeType.FANOUT,
                 durable = true,
             )
-            channel?.queueDeclare(
+            channel.queueDeclare(
                 name = "${exchange.exchange}-dead",
                 durable = true,
             )
-            channel?.queueBind(
+            channel.queueBind(
                 queue = "${exchange.exchange}-dead",
                 exchange = "${exchange.exchange}-dead",
                 routingKey = "#"
@@ -133,13 +150,15 @@ open class MessagingService(
         autoDelete: Boolean,
         arguments: Map<String, Field>,
     ) {
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
+        val channel = this.channel ?: error("Channel is not initialized")
         val dlxArguments =
             if (maxXDeathCount > 1) mapOf("x-dead-letter-exchange" to Field.LongString("${(exchange ?: this.exchange).exchange}-dlx"))
             else emptyMap()
         val quorumArguments =
             if (quorum && durable && !exclusive) mapOf("x-queue-type" to Field.LongString("quorum"))
             else emptyMap()
-        channel?.queueDeclare(
+        channel.queueDeclare(
             name = queue.queue,
             durable = durable,
             exclusive = exclusive,
@@ -154,7 +173,9 @@ open class MessagingService(
         routingKey: IMessagingKey,
         arguments: Map<String, Field>,
     ) {
-        channel?.queueBind(
+        withTimeoutOrNull(60.seconds) { channelReady.await() }
+        val channel = this.channel ?: error("Channel is not initialized")
+        channel.queueBind(
             queue = queue.queue,
             exchange = exchange.exchange,
             routingKey = routingKey.key,
@@ -163,26 +184,7 @@ open class MessagingService(
     }
 
     open fun routingKey(key: String): IMessagingKey {
-        return keys.find { it.key == key }
-            ?: throw IllegalArgumentException("Invalid routing key: $key")
-    }
-
-    // This might not be required anymore? (with robust connection)
-    open suspend fun tryWithAttempts(
-        attempts: Int = 3,
-        delay: Long = 5000,
-        block: suspend () -> Unit,
-    ) {
-        var leftAttempts = attempts
-        while (leftAttempts > 0) {
-            try {
-                block()
-                leftAttempts = 0 // Exit loop on success
-            } catch (_: Exception) {
-                delay(delay) // Try again after delay
-                leftAttempts--
-            }
-        }
+        return keys.find { it.key == key } ?: error("Invalid routing key: $key")
     }
 
     suspend inline fun <reified T> publish(
@@ -193,8 +195,10 @@ open class MessagingService(
         attempts: Int = 3,
         delay: Long = 5000,
     ) {
+        withTimeoutOrNull(60.seconds) { setupCompleted.await() }
         tryWithAttempts(attempts, delay) {
-            channel!!.basicPublish(
+            val channel = this.channel ?: error("Channel is not initialized")
+            channel.basicPublish(
                 body = (json ?: Serialization.json).encodeToString(value).toByteArray(),
                 exchange = (exchange ?: this.exchange).exchange,
                 routingKey = routingKey.key,
@@ -206,20 +210,27 @@ open class MessagingService(
     }
 
     override suspend fun listen() {
+        withTimeoutOrNull(60.seconds) { setupCompleted.await() }
+        val channel = this.channel ?: error("Channel is not initialized")
         val handleMessagingUseCase = handleMessagingUseCaseFactory()
-        val exclusiveQueue = channel?.queueDeclare()?.queueName ?: return
-        keys.filter { it.isMultiple }.forEach { routingKey ->
-            channel?.queueBind(exclusiveQueue, exchange.exchange, routingKey.key)
+
+        val exclusiveQueue = keys.filter { it.isMultiple }.takeIf { it.isNotEmpty() }?.let {
+            val exclusiveQueue = channel.queueDeclare().queueName
+            it.forEach { routingKey ->
+                channel.queueBind(exclusiveQueue, exchange.exchange, routingKey.key)
+            }
+            exclusiveQueue
         }
-        listOf(queue.queue, exclusiveQueue).forEach { queue ->
-            channel?.basicConsume(
+
+        listOfNotNull(queue.queue, exclusiveQueue).forEach { queue ->
+            channel.basicConsume(
                 queue,
                 noAck = false,
                 onDelivery = { delivery ->
                     try {
                         val routingKey = routingKey(delivery.message.routingKey)
                         handleMessagingUseCase(routingKey, delivery.message.body.decodeToString())
-                        channel?.basicAck(delivery.message.deliveryTag, false)
+                        channel.basicAck(delivery.message.deliveryTag, false)
                     } catch (exception: Exception) {
                         handleException(delivery, exception)
                     }
@@ -230,6 +241,7 @@ open class MessagingService(
 
     @Suppress("unchecked_cast")
     open suspend fun handleException(delivery: AMQPResponse.Channel.Message.Delivery, exception: Exception) {
+        val channel = this.channel ?: error("Channel is not initialized")
         if (maxXDeathCount > 1) {
             val xDeathArray = delivery.message.properties.headers?.get("x-death") as? Field.Array
             val xDeath = xDeathArray?.value?.firstOrNull() as? Field.Table
@@ -237,7 +249,7 @@ open class MessagingService(
             val tryAgain = retryCount < maxXDeathCount
 
             // Reject, so it goes to the DLX
-            if (tryAgain) channel?.basicReject(delivery.message.deliveryTag, false)
+            if (tryAgain) channel.basicReject(delivery.message.deliveryTag, false)
             else handleFailedMessage(delivery, exception)
         } else handleFailedMessage(delivery, exception)
     }
@@ -267,7 +279,8 @@ open class MessagingService(
         }
 
         // Discard the message. Override this method to handle failed messages.
-        channel?.basicAck(delivery.message.deliveryTag, false)
+        val channel = this.channel ?: error("Channel is not initialized")
+        channel.basicAck(delivery.message.deliveryTag, false)
     }
 
 }
