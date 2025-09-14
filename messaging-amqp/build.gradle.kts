@@ -74,6 +74,7 @@ kotlin {
             dependencies {
                 api(project(":core"))
                 api(libs.amqp)
+                api(libs.ktor.utils.callid)
             }
         }
         val jvmTest by getting {

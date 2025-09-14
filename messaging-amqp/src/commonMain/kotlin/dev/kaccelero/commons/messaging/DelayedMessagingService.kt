@@ -2,6 +2,7 @@ package dev.kaccelero.commons.messaging
 
 import dev.kaccelero.serializers.Serialization
 import dev.kourier.amqp.Field
+import dev.kourier.amqp.PropertiesBuilder
 import dev.kourier.amqp.properties
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CoroutineScope
@@ -72,18 +73,23 @@ open class DelayedMessagingService(
         persistent: Boolean = false,
         attempts: Int = 3,
         delay: Long = 5000,
+        crossinline configureProperties: PropertiesBuilder.() -> Unit = {},
     ) {
         withTimeoutOrNull(60.seconds) { setupCompleted.await() }
         tryWithAttempts(attempts, delay) {
             val channel = this.channel ?: error("Channel is not initialized")
+            val mapOfRequestId = mapOfRequestId()
             val delay = publishAt?.minus(Clock.System.now())?.inWholeMilliseconds ?: 0
             channel.basicPublish(
                 body = (json ?: Serialization.json).encodeToString(value).toByteArray(),
                 exchange = (exchange ?: this.exchange).exchange,
                 routingKey = routingKey.key,
                 properties = properties {
+                    configureProperties()
                     deliveryMode = if (persistent || this@DelayedMessagingService.persistent) 2u else 1u
-                    headers = mapOf("x-delay" to Field.Long(delay))
+                    headers = (headers ?: emptyMap()) + mapOfRequestId + mapOf(
+                        "x-delay" to Field.Long(delay)
+                    )
                 },
             )
         }

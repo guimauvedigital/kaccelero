@@ -1,12 +1,9 @@
 package dev.kaccelero.commons.messaging
 
 import dev.kaccelero.serializers.Serialization
-import dev.kourier.amqp.AMQPResponse
-import dev.kourier.amqp.BuiltinExchangeType
-import dev.kourier.amqp.Field
+import dev.kourier.amqp.*
 import dev.kourier.amqp.channel.AMQPChannel
 import dev.kourier.amqp.connection.AMQPConnection
-import dev.kourier.amqp.properties
 import dev.kourier.amqp.robust.createRobustAMQPConnection
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CompletableDeferred
@@ -194,16 +191,20 @@ open class MessagingService(
         persistent: Boolean = false,
         attempts: Int = 3,
         delay: Long = 5000,
+        crossinline configureProperties: PropertiesBuilder.() -> Unit = {},
     ) {
         withTimeoutOrNull(60.seconds) { setupCompleted.await() }
         tryWithAttempts(attempts, delay) {
             val channel = this.channel ?: error("Channel is not initialized")
+            val mapOfRequestId = mapOfRequestId()
             channel.basicPublish(
                 body = (json ?: Serialization.json).encodeToString(value).toByteArray(),
                 exchange = (exchange ?: this.exchange).exchange,
                 routingKey = routingKey.key,
                 properties = properties {
+                    configureProperties()
                     deliveryMode = if (persistent || this@MessagingService.persistent) 2u else 1u
+                    headers = (headers ?: emptyMap()) + mapOfRequestId
                 },
             )
         }
@@ -227,12 +228,14 @@ open class MessagingService(
                 queue,
                 noAck = false,
                 onDelivery = { delivery ->
-                    try {
-                        val routingKey = routingKey(delivery.message.routingKey)
-                        handleMessagingUseCase(routingKey, delivery.message.body.decodeToString())
-                        channel.basicAck(delivery.message.deliveryTag, false)
-                    } catch (exception: Exception) {
-                        handleException(delivery, exception)
+                    withCallId(delivery) {
+                        try {
+                            val routingKey = routingKey(delivery.message.routingKey)
+                            handleMessagingUseCase(routingKey, delivery.message.body.decodeToString())
+                            channel.basicAck(delivery.message.deliveryTag, false)
+                        } catch (exception: Exception) {
+                            handleException(delivery, exception)
+                        }
                     }
                 }
             )

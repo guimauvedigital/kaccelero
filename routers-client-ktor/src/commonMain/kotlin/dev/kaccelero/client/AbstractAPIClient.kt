@@ -5,6 +5,7 @@ import dev.kaccelero.commons.auth.ILogoutUseCase
 import dev.kaccelero.commons.auth.IRenewTokenUseCase
 import dev.kaccelero.commons.exceptions.APIException
 import dev.kaccelero.serializers.Serialization
+import io.ktor.callid.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
@@ -14,8 +15,12 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.serialization.json.Json
 
+/**
+ * Base implementation of [IAPIClient] using Ktor HTTP client.
+ */
 abstract class AbstractAPIClient(
     override val baseUrl: String,
     override val getTokenUseCase: IGetTokenUseCase? = null,
@@ -55,6 +60,9 @@ abstract class AbstractAPIClient(
             httpClient.request(baseUrl + path) {
                 this.method = method
                 if (shouldIncludeToken(method, path)) getTokenUseCase?.invoke()?.let(::bearerAuth)
+                if (shouldPropagateRequestId(method, path)) currentCoroutineContext()[KtorCallIdContextElement]?.let {
+                    header(HttpHeaders.XRequestId, it.callId)
+                }
                 builder()
             }
         }
@@ -75,6 +83,28 @@ abstract class AbstractAPIClient(
         }
     }
 
+    /**
+     * Determines whether to include the authentication token in the request.
+     * Can be overridden to customize behavior based on method and path.
+     * By default, it returns true for all requests.
+     *
+     * @param method The HTTP method of the request.
+     * @param path The path of the request.
+     *
+     * @return True if the token should be included, false otherwise.
+     */
     open fun shouldIncludeToken(method: HttpMethod, path: String): Boolean = true
+
+    /**
+     * Determines whether to propagate the request ID in the request.
+     * Can be overridden to customize behavior based on method and path.
+     * By default, it returns true for all requests.
+     *
+     * @param method The HTTP method of the request.
+     * @param path The path of the request.
+     *
+     * @return True if the request ID should be propagated, false otherwise.
+     */
+    open fun shouldPropagateRequestId(method: HttpMethod, path: String): Boolean = true
 
 }
