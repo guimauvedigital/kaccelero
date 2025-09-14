@@ -72,6 +72,7 @@ dependencyResolutionManagement {
             library("ktor-client-content-negotiation", "io.ktor", "ktor-client-content-negotiation").versionRef("ktor")
             library("ktor-client-auth", "io.ktor", "ktor-client-auth").versionRef("ktor")
             library("ktor-client-mock", "io.ktor", "ktor-client-mock").versionRef("ktor")
+            library("ktor-utils-callid", "io.ktor", "ktor-call-id").versionRef("ktor")
 
             bundle(
                 "ktor-server-api",
@@ -105,7 +106,8 @@ dependencyResolutionManagement {
                     "ktor-client-core",
                     "ktor-client-content-negotiation",
                     "ktor-serialization-kotlinx-json",
-                    "ktor-client-auth"
+                    "ktor-client-auth",
+                    "ktor-utils-callid"
                 )
             )
             bundle(
