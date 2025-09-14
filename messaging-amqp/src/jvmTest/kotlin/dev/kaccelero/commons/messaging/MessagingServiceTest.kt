@@ -1,6 +1,7 @@
 package dev.kaccelero.commons.messaging
 
 import dev.kaccelero.serializers.Serialization
+import io.ktor.callid.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -268,6 +269,96 @@ class MessagingServiceTest {
         integrationService.channel!!.queueDelete(integrationExchange.exchange + "-dead")
 
         Unit // avoid returning the last expression (would make the test not trigger)
+    }
+
+    @Test
+    fun testPublishContainsNoRequestIdIfNotSpecified() = runBlocking {
+        val integrationExchange = object : IMessagingExchange {
+            override val exchange = "integration-test-exchange-no-request-id"
+        }
+        val integrationQueue = object : IMessagingQueue {
+            override val queue = "integration-test-queue-no-request-id"
+        }
+        val integrationKey = object : IMessagingKey {
+            override val key = "integration-test-key-no-request-id"
+            override val isMultiple = false
+        }
+        val requestIdDeferred = CompletableDeferred<String?>()
+        val integrationService = MessagingService(
+            host = "localhost",
+            user = "guest",
+            password = "guest",
+            exchange = integrationExchange,
+            queue = integrationQueue,
+            keys = listOf(integrationKey),
+            handleMessagingUseCaseFactory = {
+                object : IHandleMessagingUseCase {
+                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                        requestIdDeferred.complete(currentCoroutineContext()[KtorCallIdContextElement]?.callId)
+                    }
+                }
+            },
+            coroutineScope = this,
+            autoConnect = true,
+            autoListen = true,
+        )
+
+        // Publish and ensure headers do not contain X-Request-Id
+        integrationService.publish(integrationKey, TestMessage("no-request-id"))
+        val capturedRequestId = withTimeoutOrNull(10.seconds) { requestIdDeferred.await() }
+        assertEquals(null, capturedRequestId)
+
+        // Cleanup
+        integrationService.channel!!.exchangeDelete(integrationExchange.exchange)
+        integrationService.channel!!.queueDelete(integrationQueue.queue)
+
+        Unit
+    }
+
+    @Test
+    fun testPublishContainsOriginalRequestId() = runBlocking {
+        val integrationExchange = object : IMessagingExchange {
+            override val exchange = "integration-test-exchange-with-request-id"
+        }
+        val integrationQueue = object : IMessagingQueue {
+            override val queue = "integration-test-queue-with-request-id"
+        }
+        val integrationKey = object : IMessagingKey {
+            override val key = "integration-test-key-with-request-id"
+            override val isMultiple = false
+        }
+        val requestIdDeferred = CompletableDeferred<String?>()
+        val integrationService = MessagingService(
+            host = "localhost",
+            user = "guest",
+            password = "guest",
+            exchange = integrationExchange,
+            queue = integrationQueue,
+            keys = listOf(integrationKey),
+            handleMessagingUseCaseFactory = {
+                object : IHandleMessagingUseCase {
+                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                        requestIdDeferred.complete(currentCoroutineContext()[KtorCallIdContextElement]?.callId)
+                    }
+                }
+            },
+            coroutineScope = this,
+            autoConnect = true,
+            autoListen = true,
+        )
+
+        val requestId = "req-" + System.currentTimeMillis()
+        withCallId(requestId) {
+            integrationService.publish(integrationKey, TestMessage("with-request-id"))
+        }
+        val capturedRequestId = withTimeoutOrNull(10.seconds) { requestIdDeferred.await() }
+        assertEquals(requestId, capturedRequestId)
+
+        // Cleanup
+        integrationService.channel!!.exchangeDelete(integrationExchange.exchange)
+        integrationService.channel!!.queueDelete(integrationQueue.queue)
+
+        Unit
     }
 
 }
