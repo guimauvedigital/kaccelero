@@ -44,7 +44,7 @@ kotlin {
         iosArm64()
     )
 
-    // jvm
+    // jvm & js
     jvmToolchain(21)
     androidTarget()
     jvm {
@@ -53,6 +53,12 @@ kotlin {
                 useJUnitPlatform()
             }
         }
+    }
+    js {
+        generateTypeScriptDefinitions()
+        binaries.library()
+        nodejs()
+        browser()
     }
 
     applyDefaultHierarchyTemplate()
@@ -71,6 +77,12 @@ kotlin {
             dependencies {
 
             }
+        }
+        val webMain by creating {
+            dependsOn(commonMain)
+        }
+        val jsMain by getting {
+            dependsOn(webMain)
         }
     }
 }
