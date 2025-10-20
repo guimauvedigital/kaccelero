@@ -1,5 +1,6 @@
 package dev.kaccelero.models
 
+import dev.kaccelero.extensions.normalizeUUID
 import dev.kaccelero.serializers.UUIDSerializer
 import js.typedarrays.Uint8Array
 import kotlinx.serialization.Serializable
@@ -16,7 +17,7 @@ actual data class UUID(val jsUUID: Uint8Array<*>) {
     actual constructor() : this(uuid.v4() as Uint8Array<*>)
 
     @JsName("fromString")
-    actual constructor(string: String) : this(uuid.parse(string) as Uint8Array<*>)
+    actual constructor(string: String) : this(uuid.parse(string.normalizeUUID()) as Uint8Array<*>)
 
     actual override fun toString(): String = uuid.stringify(jsUUID).lowercase()
 
