@@ -7,7 +7,7 @@ An API key plugin for Ktor
 Add dependency to your `build.gradle(.kts)` or `pom.xml`:
 
 ```kotlin
-api("dev.kaccelero:security-key-ktor:0.6.6")
+api("dev.kaccelero:security-key-ktor:0.6.7")
 ```
 
 ```xml
@@ -15,7 +15,7 @@ api("dev.kaccelero:security-key-ktor:0.6.6")
 <dependency>
     <groupId>dev.kaccelero</groupId>
     <artifactId>security-key-ktor-jvm</artifactId>
-    <version>0.6.6</version>
+    <version>0.6.7</version>
 </dependency>
 ```
 
