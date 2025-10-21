@@ -108,6 +108,11 @@ kotlin {
                 api(npm("uuid", "11.1.0"))
             }
         }
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
         val desktopMain by creating {
             dependsOn(nativeMain)
         }

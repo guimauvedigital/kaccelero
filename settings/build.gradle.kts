@@ -44,7 +44,7 @@ kotlin {
         iosArm64()
     )
 
-    // jvm
+    // jvm & js
     jvmToolchain(21)
     androidTarget()
     jvm {
@@ -53,6 +53,11 @@ kotlin {
                 useJUnitPlatform()
             }
         }
+    }
+    js {
+        generateTypeScriptDefinitions()
+        binaries.library()
+        browser()
     }
 
     applyDefaultHierarchyTemplate()
@@ -70,6 +75,30 @@ kotlin {
         val androidMain by getting {
             dependencies {
 
+            }
+        }
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(kotlin("test-junit"))
+                implementation("org.robolectric:robolectric:4.13")
+                implementation("androidx.test:core:1.6.1")
+            }
+        }
+        val appleTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        val webMain by creating {
+            dependsOn(commonMain)
+        }
+        val jsMain by getting {
+            dependsOn(webMain)
+        }
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
             }
         }
     }
