@@ -7,13 +7,13 @@ import kotlin.test.*
 class NativeSettingsRepositoryTest {
 
     private lateinit var userDefaults: NSUserDefaults
-    private lateinit var keychainRepository: FakeKeychainRepository
+    private lateinit var keychainRepository: KeychainRepository
     private lateinit var repository: NativeSettingsRepository
 
     @BeforeTest
     fun setup() {
         userDefaults = NSUserDefaults.standardUserDefaults
-        keychainRepository = FakeKeychainRepository()
+        keychainRepository = KeychainRepository()
         repository = NativeSettingsRepository(
             userDefaults = userDefaults,
             keychainRepository = keychainRepository,
@@ -257,26 +257,4 @@ class NativeSettingsRepositoryTest {
         assertEquals(123, repository.getInt("key3"))
     }
 
-    // Fake KeychainRepository for testing
-    private class FakeKeychainRepository {
-        private val storage = mutableMapOf<String, platform.Foundation.NSData>()
-
-        fun setKeychainItem(key: String, value: platform.Foundation.NSData?) {
-            if (value != null) {
-                storage[key] = value
-            }
-        }
-
-        fun getKeychainItem(key: String): platform.Foundation.NSData? {
-            return storage[key]
-        }
-
-        fun hasKeychainItem(key: String): Boolean {
-            return storage.containsKey(key)
-        }
-
-        fun removeKeychainItem(key: String) {
-            storage.remove(key)
-        }
-    }
 }

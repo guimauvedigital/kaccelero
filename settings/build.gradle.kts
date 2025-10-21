@@ -57,7 +57,6 @@ kotlin {
     js {
         generateTypeScriptDefinitions()
         binaries.library()
-        nodejs()
         browser()
     }
 
