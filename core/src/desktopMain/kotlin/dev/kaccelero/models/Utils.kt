@@ -1,5 +1,7 @@
 package dev.kaccelero.models
 
+import dev.kaccelero.extensions.normalizeUUID
+
 internal const val UUID_BYTES = 16
 internal const val UUID_STRING_LENGTH = 36
 internal val UUID_CHARS = ('0'..'9') + ('a'..'f')
@@ -19,14 +21,15 @@ internal val UUID_BYTE_RANGES: List<IntRange> = listOf(
 )
 
 internal fun uuidBytesFromString(string: String): ByteArray {
-    require(string.length == UUID_STRING_LENGTH) { "UUID string has invalid length: $string" }
+    val normalizedString = string.normalizeUUID()
+    require(normalizedString.length == UUID_STRING_LENGTH) { "UUID string has invalid length: $string" }
     val bytes = ByteArray(UUID_BYTES)
     var byte = 0
     for (range in UUID_CHAR_RANGES) {
         var i = range.first
         while (i < range.last) {
-            val left = halfByteFromChar(string[i++])
-            val right = halfByteFromChar(string[i++])
+            val left = halfByteFromChar(normalizedString[i++])
+            val right = halfByteFromChar(normalizedString[i++])
             require(left != null && right != null) {
                 "Uuid string has invalid characters: $string"
             }

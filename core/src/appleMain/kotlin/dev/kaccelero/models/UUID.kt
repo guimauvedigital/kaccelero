@@ -1,5 +1,6 @@
 package dev.kaccelero.models
 
+import dev.kaccelero.extensions.normalizeUUID
 import dev.kaccelero.serializers.UUIDSerializer
 import kotlinx.cinterop.UnsafeNumber
 import kotlinx.serialization.Serializable
@@ -9,7 +10,7 @@ import platform.Foundation.NSUUID
 actual class UUID(val nsUUID: NSUUID) {
 
     actual constructor() : this(NSUUID())
-    actual constructor(string: String) : this(NSUUID(string))
+    actual constructor(string: String) : this(NSUUID(string.normalizeUUID()))
 
     actual override fun toString(): String = nsUUID.UUIDString.lowercase()
 

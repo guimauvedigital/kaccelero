@@ -3,6 +3,7 @@ package dev.kaccelero.models
 import dev.kaccelero.serializers.UUIDSerializer
 import kotlinx.serialization.Serializable
 
+
 @Serializable(UUIDSerializer::class)
 expect class UUID {
 
