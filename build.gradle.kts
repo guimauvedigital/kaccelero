@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
     group = "dev.kaccelero"
-    version = "0.6.7"
+    version = "0.6.8"
     project.ext.set("url", "https://github.com/guimauvedigital/kaccelero")
     project.ext.set("license.name", "Apache 2.0")
     project.ext.set("license.url", "https://www.apache.org/licenses/LICENSE-2.0.txt")

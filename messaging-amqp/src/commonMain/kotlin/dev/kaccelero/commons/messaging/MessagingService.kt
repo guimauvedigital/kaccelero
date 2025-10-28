@@ -231,7 +231,7 @@ open class MessagingService(
                     withCallId(delivery) {
                         try {
                             val routingKey = routingKey(delivery.message.routingKey)
-                            handleMessagingUseCase(routingKey, delivery.message.body.decodeToString())
+                            handleMessagingUseCase(routingKey, delivery.message.body.decodeToString(), delivery)
                             channel.basicAck(delivery.message.deliveryTag, false)
                         } catch (exception: Exception) {
                             handleException(delivery, exception)
