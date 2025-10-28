@@ -1,6 +1,7 @@
 package dev.kaccelero.commons.messaging
 
 import dev.kaccelero.serializers.Serialization
+import dev.kourier.amqp.AMQPResponse
 import io.ktor.callid.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestScope
@@ -30,7 +31,12 @@ class MessagingServiceTest {
             override val isMultiple = false
         }
         fakeUseCase = object : IHandleMessagingUseCase {
-            override suspend fun invoke(input1: IMessagingKey, input2: String) {}
+            override suspend fun invoke(
+                input1: IMessagingKey,
+                input2: String,
+                input3: AMQPResponse.Channel.Message.Delivery,
+            ) {
+            }
         }
         scope = TestScope()
         service = MessagingService(
@@ -176,7 +182,11 @@ class MessagingServiceTest {
             keys = listOf(integrationKey),
             handleMessagingUseCaseFactory = {
                 object : IHandleMessagingUseCase {
-                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                    override suspend fun invoke(
+                        input1: IMessagingKey,
+                        input2: String,
+                        input3: AMQPResponse.Channel.Message.Delivery,
+                    ) {
                         if (input1.key == integrationKey.key) received.complete(
                             Serialization.json.decodeFromString(input2)
                         )
@@ -225,7 +235,11 @@ class MessagingServiceTest {
             keys = listOf(integrationKey),
             handleMessagingUseCaseFactory = {
                 object : IHandleMessagingUseCase {
-                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                    override suspend fun invoke(
+                        input1: IMessagingKey,
+                        input2: String,
+                        input3: AMQPResponse.Channel.Message.Delivery,
+                    ) {
                         if (input1.key == integrationKey.key) {
                             invocationCount++
                             throw RuntimeException("Force DLX/DeadLetter for test")
@@ -293,7 +307,11 @@ class MessagingServiceTest {
             keys = listOf(integrationKey),
             handleMessagingUseCaseFactory = {
                 object : IHandleMessagingUseCase {
-                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                    override suspend fun invoke(
+                        input1: IMessagingKey,
+                        input2: String,
+                        input3: AMQPResponse.Channel.Message.Delivery,
+                    ) {
                         requestIdDeferred.complete(currentCoroutineContext()[KtorCallIdContextElement]?.callId)
                     }
                 }
@@ -337,7 +355,11 @@ class MessagingServiceTest {
             keys = listOf(integrationKey),
             handleMessagingUseCaseFactory = {
                 object : IHandleMessagingUseCase {
-                    override suspend fun invoke(input1: IMessagingKey, input2: String) {
+                    override suspend fun invoke(
+                        input1: IMessagingKey,
+                        input2: String,
+                        input3: AMQPResponse.Channel.Message.Delivery,
+                    ) {
                         requestIdDeferred.complete(currentCoroutineContext()[KtorCallIdContextElement]?.callId)
                     }
                 }
