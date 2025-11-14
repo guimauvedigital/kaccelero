@@ -124,4 +124,119 @@ class HealthTest {
         assertEquals(mapOf("test" to false), response.body())
     }
 
+    @Test
+    fun testCachingReturnsServiceUnavailableUntilFirstCheck() = testApplication {
+        var checkExecuted = false
+        val client = installApp(this) {
+            enableCachingResults(
+                refreshInterval = kotlin.time.Duration.parse("1s"),
+                checkTimeout = kotlin.time.Duration.parse("500ms"),
+            )
+            healthCheck("test") {
+                kotlinx.coroutines.delay(200)
+                checkExecuted = true
+                true
+            }
+        }
+
+        // First request should return ServiceUnavailable with empty map (cache not initialized)
+        val response1 = client.get("/healthz")
+        assertEquals(HttpStatusCode.ServiceUnavailable, response1.status)
+        assertEquals(emptyMap<String, Boolean>(), response1.body())
+
+        // Wait for initial check to complete
+        kotlinx.coroutines.delay(300)
+
+        // Second request should return cached result
+        val response2 = client.get("/healthz")
+        assertEquals(HttpStatusCode.OK, response2.status)
+        assertEquals(mapOf("test" to true), response2.body())
+        assert(checkExecuted) { "Check should have been executed" }
+    }
+
+    @Test
+    fun testCachingEnabledReturnsServiceUnavailableInitially() = testApplication {
+        val client = installApp(this) {
+            enableCachingResults(
+                refreshInterval = kotlin.time.Duration.parse("1s"),
+                checkTimeout = kotlin.time.Duration.parse("500ms"),
+            )
+            healthCheck("test") {
+                // Slow check to ensure we can make request before cache is populated
+                kotlinx.coroutines.delay(200)
+                true
+            }
+        }
+
+        // Make request immediately before cache is populated
+        val response = client.get("/healthz")
+        assertEquals(HttpStatusCode.ServiceUnavailable, response.status)
+        assertEquals(emptyMap<String, Boolean>(), response.body())
+    }
+
+    @Test
+    fun testCachingReturnsResultsAfterInitialCheck() = testApplication {
+        val client = installApp(this) {
+            enableCachingResults(
+                refreshInterval = kotlin.time.Duration.parse("10s"),
+                checkTimeout = kotlin.time.Duration.parse("2s"),
+            )
+            healthCheck("test") { true }
+        }
+
+        // Wait for initial check to complete
+        kotlinx.coroutines.delay(500)
+
+        // Should now return cached result
+        val response = client.get("/healthz")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(mapOf("test" to true), response.body())
+    }
+
+    @Test
+    fun testCachingWithFailedCheck() = testApplication {
+        val client = installApp(this) {
+            enableCachingResults(
+                refreshInterval = kotlin.time.Duration.parse("10s"),
+                checkTimeout = kotlin.time.Duration.parse("2s"),
+            )
+            healthCheck("test") { false }
+        }
+
+        // Wait for initial check
+        kotlinx.coroutines.delay(500)
+
+        // Should cache the failure
+        val response = client.get("/healthz")
+        assertEquals(HttpStatusCode.ServiceUnavailable, response.status)
+        assertEquals(mapOf("test" to false), response.body())
+    }
+
+    @Test
+    fun testCachingStalenessDetection() = testApplication {
+        val client = installApp(this) {
+            enableCachingResults(
+                refreshInterval = kotlin.time.Duration.parse("10s"),
+                checkTimeout = kotlin.time.Duration.parse("200ms"),
+                stalenessThreshold = kotlin.time.Duration.parse("300ms"),
+            )
+            healthCheck("test") { true }
+        }
+
+        // Wait for initial check
+        kotlinx.coroutines.delay(100)
+
+        // First request should return OK
+        val response1 = client.get("/healthz")
+        assertEquals(HttpStatusCode.OK, response1.status)
+
+        // Wait for cache to become stale
+        kotlinx.coroutines.delay(400)
+
+        // Should return ServiceUnavailable due to stale cache
+        val response2 = client.get("/healthz")
+        assertEquals(HttpStatusCode.ServiceUnavailable, response2.status)
+        assertEquals(mapOf("test" to true), response2.body())
+    }
+
 }

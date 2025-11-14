@@ -1,5 +1,8 @@
 package dev.kaccelero.plugins
 
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+
 class HealthConfiguration internal constructor() {
 
     var checks: Map<String, Map<String, HealthCheck>> = emptyMap()
@@ -7,6 +10,14 @@ class HealthConfiguration internal constructor() {
     var noHealth = false
         private set
     var noReady = false
+        private set
+    var cachingResults: Boolean = false
+        private set
+    var cachingRefreshInterval: Duration = 60.seconds
+        private set
+    var cachingCheckTimeout: Duration = 30.seconds
+        private set
+    var cachingStalenessThreshold: Duration? = null
         private set
 
     internal fun getChecksWithFunctions(): Map<String, suspend () -> Map<String, Boolean>> =
@@ -60,6 +71,23 @@ class HealthConfiguration internal constructor() {
      * Add a ready check giving it a name
      */
     fun readyCheck(name: String, check: HealthCheck) = customCheck("readyz", name, check)
+
+    /**
+     * Enable caching of health check results with background refresh
+     * @param refreshInterval How often to refresh the cache in background
+     * @param checkTimeout Maximum time a single check can run before being considered failed
+     * @param stalenessThreshold Maximum age of cache before it's considered stale (defaults to 3x refreshInterval)
+     */
+    fun enableCachingResults(
+        refreshInterval: Duration = 60.seconds,
+        checkTimeout: Duration = 30.seconds,
+        stalenessThreshold: Duration? = null,
+    ) {
+        cachingResults = true
+        cachingRefreshInterval = refreshInterval
+        cachingCheckTimeout = checkTimeout
+        cachingStalenessThreshold = stalenessThreshold
+    }
 
     internal fun ensureWellKnown() {
         if (!noHealth) getCheck("healthz")
