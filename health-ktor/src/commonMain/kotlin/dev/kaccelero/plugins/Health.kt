@@ -12,6 +12,9 @@ class Health private constructor(
 ) {
 
     private val cache = if (config.cachingResults) HealthCheckCache() else null
+
+    // refreshJobs is only accessed during initialization (startBackgroundRefresh) and cleanup (shutdown)
+    // These operations never run concurrently, so no synchronization is needed
     private val refreshJobs = mutableListOf<Job>()
 
     fun addInterceptor(pipeline: ApplicationCallPipeline) {
@@ -22,7 +25,7 @@ class Health private constructor(
             val checkFunction = checks[url] ?: return@intercept
 
             if (config.cachingResults && cache != null) {
-                // Use cached results
+                // Use cached results (single lock acquisition)
                 val cached = cache.get(url) ?: run {
                     // Cache not initialized yet, return ServiceUnavailable
                     call.respond(HttpStatusCode.ServiceUnavailable, emptyMap<String, Boolean>())
@@ -30,10 +33,10 @@ class Health private constructor(
                     return@intercept
                 }
 
-                // Check if cache is stale
+                // Check if cache is stale (no lock needed - calculated from cached object)
                 val stalenessThreshold = config.cachingStalenessThreshold
                     ?: (config.cachingRefreshInterval * 3)
-                if (cache.isStale(url, stalenessThreshold)) {
+                if (cached.isStale(stalenessThreshold)) {
                     // Cache is stale, return ServiceUnavailable
                     call.respond(HttpStatusCode.ServiceUnavailable, cached.results)
                     finish()
@@ -100,12 +103,8 @@ class Health private constructor(
                 checkFunction.invoke()
             }
             cache.update(url, result)
-        } catch (_: TimeoutCancellationException) {
-            // Check timed out, mark all checks as failed
-            val failedResults = checkNames.associateWith { false }
-            cache.update(url, failedResults)
         } catch (_: Exception) {
-            // Check failed with exception, mark all checks as failed
+            // Check failed with exception (including timeout), mark all checks as failed
             val failedResults = checkNames.associateWith { false }
             cache.update(url, failedResults)
         }
@@ -126,7 +125,8 @@ class Health private constructor(
                     .apply { ensureWellKnown() }
             ).apply {
                 addInterceptor(pipeline)
-                if (pipeline is Application) pipeline.monitor.subscribe(ApplicationStopped) {
+                // Always subscribe to ApplicationStopped if possible, to ensure cleanup
+                (pipeline as? Application)?.monitor?.subscribe(ApplicationStopped) {
                     cleanup()
                 }
             }

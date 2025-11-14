@@ -14,7 +14,12 @@ internal class HealthCheckCache {
     data class CachedResult(
         val results: Map<String, Boolean>,
         val lastUpdate: Instant,
-    )
+    ) {
+        fun isStale(stalenessThreshold: Duration): Boolean {
+            val age = Clock.System.now() - lastUpdate
+            return age > stalenessThreshold
+        }
+    }
 
     suspend fun get(url: String): CachedResult? = mutex.withLock {
         cache[url]
@@ -25,12 +30,6 @@ internal class HealthCheckCache {
             results = results,
             lastUpdate = Clock.System.now(),
         )
-    }
-
-    suspend fun isStale(url: String, stalenessThreshold: Duration): Boolean = mutex.withLock {
-        val cached = cache[url] ?: return@withLock true
-        val age = Clock.System.now() - cached.lastUpdate
-        age > stalenessThreshold
     }
 
 }

@@ -239,4 +239,46 @@ class HealthTest {
         assertEquals(mapOf("test" to true), response2.body())
     }
 
+    @Test
+    fun testCachingValidationRefreshIntervalMustBePositive() {
+        val exception = kotlin.test.assertFailsWith<IllegalArgumentException> {
+            HealthConfiguration().enableCachingResults(
+                refreshInterval = kotlin.time.Duration.parse("-1s")
+            )
+        }
+        assert(exception.message?.contains("refreshInterval must be positive") == true)
+    }
+
+    @Test
+    fun testCachingValidationCheckTimeoutMustBePositive() {
+        val exception = kotlin.test.assertFailsWith<IllegalArgumentException> {
+            HealthConfiguration().enableCachingResults(
+                checkTimeout = kotlin.time.Duration.parse("-1s")
+            )
+        }
+        assert(exception.message?.contains("checkTimeout must be positive") == true)
+    }
+
+    @Test
+    fun testCachingValidationCheckTimeoutMustBeLessThanRefreshInterval() {
+        val exception = kotlin.test.assertFailsWith<IllegalArgumentException> {
+            HealthConfiguration().enableCachingResults(
+                refreshInterval = kotlin.time.Duration.parse("10s"),
+                checkTimeout = kotlin.time.Duration.parse("15s")
+            )
+        }
+        assert(exception.message?.contains("checkTimeout") == true)
+        assert(exception.message?.contains("must be less than") == true)
+    }
+
+    @Test
+    fun testCachingValidationStalenessThresholdMustBePositive() {
+        val exception = kotlin.test.assertFailsWith<IllegalArgumentException> {
+            HealthConfiguration().enableCachingResults(
+                stalenessThreshold = kotlin.time.Duration.parse("-1s")
+            )
+        }
+        assert(exception.message?.contains("stalenessThreshold must be positive") == true)
+    }
+
 }

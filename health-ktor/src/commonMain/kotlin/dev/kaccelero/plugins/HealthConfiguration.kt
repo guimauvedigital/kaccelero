@@ -74,15 +74,25 @@ class HealthConfiguration internal constructor() {
 
     /**
      * Enable caching of health check results with background refresh
-     * @param refreshInterval How often to refresh the cache in background
-     * @param checkTimeout Maximum time a single check can run before being considered failed
-     * @param stalenessThreshold Maximum age of cache before it's considered stale (defaults to 3x refreshInterval)
+     * @param refreshInterval How often to refresh the cache in background (must be positive)
+     * @param checkTimeout Maximum time a single check can run before being considered failed (must be positive)
+     * @param stalenessThreshold Maximum age of cache before it's considered stale (defaults to 3x refreshInterval, must be positive if provided)
+     * @throws IllegalArgumentException if any duration is not positive, or if checkTimeout >= refreshInterval
      */
     fun enableCachingResults(
         refreshInterval: Duration = 60.seconds,
         checkTimeout: Duration = 30.seconds,
         stalenessThreshold: Duration? = null,
     ) {
+        require(refreshInterval.isPositive()) { "refreshInterval must be positive, got $refreshInterval" }
+        require(checkTimeout.isPositive()) { "checkTimeout must be positive, got $checkTimeout" }
+        require(checkTimeout < refreshInterval) {
+            "checkTimeout ($checkTimeout) must be less than refreshInterval ($refreshInterval)"
+        }
+        stalenessThreshold?.let {
+            require(it.isPositive()) { "stalenessThreshold must be positive, got $it" }
+        }
+
         cachingResults = true
         cachingRefreshInterval = refreshInterval
         cachingCheckTimeout = checkTimeout
