@@ -3,7 +3,9 @@ package dev.kaccelero.commons.messaging
 import dev.kaccelero.serializers.Serialization
 import dev.kourier.amqp.*
 import dev.kourier.amqp.channel.AMQPChannel
+import dev.kourier.amqp.connection.AMQPConfigBuilder
 import dev.kourier.amqp.connection.AMQPConnection
+import dev.kourier.amqp.connection.amqpConfig
 import dev.kourier.amqp.robust.createRobustAMQPConnection
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.CompletableDeferred
@@ -50,8 +52,15 @@ open class MessagingService(
         }
     }
 
+    open suspend fun createConnection(
+        coroutineScope: CoroutineScope,
+        block: AMQPConfigBuilder.() -> Unit,
+    ): AMQPConnection {
+        return createRobustAMQPConnection(coroutineScope, block)
+    }
+
     override suspend fun connect() {
-        val connection = createRobustAMQPConnection(coroutineScope) {
+        val connection = createConnection(coroutineScope) {
             server {
                 host = this@MessagingService.host
                 user = this@MessagingService.user
